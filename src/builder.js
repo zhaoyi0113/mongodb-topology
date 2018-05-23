@@ -17,16 +17,18 @@ const treeNodeTypes = {
 };
 
 class TreeBuilder {
-  inspect(driver) {
-    const db = driver.db('admin').admin();
+  constructor(driver) {
+    this.driver = driver;
+  }
+  inspect() {
+    const driver = this.driver;
     return new Promise((resolve, reject) => {
       Promise.all([
-        this.inspectDatabases(driver, db),
+        this.inspectDatabases(driver),
         this.inspectUsers(driver),
-        this.inspectAllRoles(driver, db),
-        this.inspectReplicaMembers(db)
+        this.inspectAllRoles(driver),
+        this.inspectReplicaMembers(driver)
       ]).then(value => {
-        console.log('generate tree topology ', value);
         resolve(value.filter(v => {
           return v !== null && v !== undefined;
         }));
@@ -39,7 +41,8 @@ class TreeBuilder {
   /**
    * discover all databases in a mongodb instance
    */
-  inspectDatabases(driver, adminDb) {
+  inspectDatabases(driver) {
+    const adminDb = driver.db('admin').admin();
     return new Promise((resolve, _reject) => {
       const inspectResult = {
         text: 'Databases',
@@ -59,7 +62,6 @@ class TreeBuilder {
             .all(promises)
             .then(values => {
               inspectResult.children = _.sortBy(values, 'text');
-              // inspectResult = _.sortBy(inspectResult, 'text');
               resolve(inspectResult);
             })
             .catch(err => {
@@ -193,7 +195,8 @@ class TreeBuilder {
     });
   }
 
-  inspectAllRoles(driver, adminDb) {
+  inspectAllRoles(driver) {
+    const adminDb = driver.db('admin').admin();
     const allRoles = {
       text: 'Roles',
       children: []
@@ -414,13 +417,14 @@ class TreeBuilder {
    *
    * @param db
    */
-  inspectReplicaMembers(db) {
+  inspectReplicaMembers(driver) {
+    const adminDb = driver.db('admin').admin();
     const replica = {
       text: 'Replica Set',
       children: []
     };
     return new Promise(resolve => {
-      db
+      adminDb
         .command({
           replSetGetStatus: 1
         }, (err, result) => {
