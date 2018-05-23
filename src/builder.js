@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const mongodb = require('mongodb');
+
 const treeNodeTypes = {
   DATABASE: 'database',
   COLLECTION: 'collection',
@@ -16,12 +18,41 @@ const treeNodeTypes = {
   ARBITER: 'arbiter'
 };
 
-class TreeBuilder {
+class TreeInspector {
   constructor(driver) {
     this.driver = driver;
   }
   inspect() {
     const driver = this.driver;
+    if (driver.topology.constructor == mongodb.Mongos) {
+      console.log('inspect mongo os');
+      return new Promise((resolve, reject) => {
+        Promise.all([
+          this.getAllShards(driver),
+          this.getAllConfigs(driver),
+          this.getAllMongos(driver),
+          this.inspectDatabases(driver),
+          this.inspectUsers(driver),
+          this.inspectAllRoles(driver),
+          this.inspectReplicaMembers(driver)
+        ])
+          .then(value => {
+            resolve(
+              value.filter(v => {
+                return v !== null && v !== undefined;
+              })
+            );
+          })
+          .catch(err => {
+            reject(err);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      }).catch(err => {
+        console.error('get error ', err);
+      });
+    }
     return new Promise((resolve, reject) => {
       Promise.all([
         this.inspectDatabases(driver),
@@ -334,11 +365,11 @@ class TreeBuilder {
           }
         })
         .catch(err => {
-          l.error('failed to get shard map ', err);
+          console.error('failed to get shard map ', err);
           resolve(configTree);
         });
     }).catch(err => {
-      l.info('cant run get shard map command ', err);
+      console.log('cant run get shard map command ', err);
     });
   }
 
@@ -383,7 +414,7 @@ class TreeBuilder {
           return resolve(shardsTree);
         });
     }).catch(err => {
-      l.error('get all shards error', err);
+      console.error('get all shards error', err);
       throw new errors.BadRequest(err);
     });
   }
@@ -408,7 +439,7 @@ class TreeBuilder {
           resolve(shardsTree);
         });
     }).catch(err => {
-      l.error('get all mongos error', err);
+      console.error('get all mongos error', err);
       throw new errors.BadRequest(err);
     });
   }
@@ -463,4 +494,4 @@ class TreeBuilder {
   }
 }
 
-module.exports = TreeBuilder;
+module.exports = TreeInspector;
