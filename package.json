@@ -1,6 +1,6 @@
 {
-  "name": "mongo-tree",
-  "version": "1.0.0",
+  "name": "mongodb-tree",
+  "version": "0.0.1",
   "description": "Mongo Tree provides a function to query mongodb tree struction for single instance, replica set and shard cluster.",
   "main": "index.js",
   "author": "Joey Yi Zhao (zhaoyi0113@gmail.com)",
