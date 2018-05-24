@@ -20,7 +20,7 @@ describe('test build database tree', () => {
       return inspector.inspectDatabases();
     }).then((dbs) => {
       console.log(dbs);
-      assert.equal(dbs.text: 'Databases');
+      assert.equal(dbs.text, 'Databases');
       done();
     }).catch(err => {
       console.error(err);
