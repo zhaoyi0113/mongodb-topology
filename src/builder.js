@@ -28,13 +28,13 @@ class TreeInspector {
       console.log('inspect mongo os');
       return new Promise((resolve, reject) => {
         Promise.all([
-          this.getAllShards(driver),
-          this.getAllConfigs(driver),
-          this.getAllMongos(driver),
-          this.inspectDatabases(driver),
-          this.inspectUsers(driver),
-          this.inspectAllRoles(driver),
-          this.inspectReplicaMembers(driver)
+          this.getAllShards(),
+          this.getAllConfigs(),
+          this.getAllMongos(),
+          this.inspectDatabases(),
+          this.inspectUsers(),
+          this.inspectAllRoles(),
+          this.inspectReplicaMembers()
         ])
           .then(value => {
             resolve(
@@ -72,8 +72,8 @@ class TreeInspector {
   /**
    * discover all databases in a mongodb instance
    */
-  inspectDatabases(driver) {
-    const adminDb = driver.db('admin').admin();
+  inspectDatabases() {
+    const adminDb = this.driver.db('admin').admin();
     return new Promise((resolve, _reject) => {
       const inspectResult = {
         text: 'Databases',
@@ -87,7 +87,7 @@ class TreeInspector {
           dbs
             .databases
             .map(database => {
-              promises.push(this.inspectDatabase(driver, database.name));
+              promises.push(this.inspectDatabase(this.driver, database.name));
             });
           Promise
             .all(promises)
@@ -100,9 +100,9 @@ class TreeInspector {
             });
         })
         .catch(err => {
-          log.warn(err.message);
+          console.warn(err.message);
           this
-            .inspectDatabase(driver, adminDb.databaseName)
+            .inspectDatabase(this.driver, adminDb.databaseName)
             .then(value => {
               inspectResult.children = [value];
               resolve(inspectResult);
@@ -190,13 +190,13 @@ class TreeInspector {
    *
    * @param db
    */
-  inspectUsers(driver) {
+  inspectUsers() {
     const users = {
       text: 'Users',
       children: []
     };
     return new Promise(resolve => {
-      const userCollection = driver
+      const userCollection = this.driver
         .db('admin')
         .collection('system.users');
       if (!userCollection) {
@@ -226,8 +226,8 @@ class TreeInspector {
     });
   }
 
-  inspectAllRoles(driver) {
-    const adminDb = driver.db('admin').admin();
+  inspectAllRoles() {
+    const adminDb = this.driver.db('admin').admin();
     const allRoles = {
       text: 'Roles',
       children: []
@@ -340,9 +340,9 @@ class TreeInspector {
     return '(UNKNOWN)';
   }
 
-  getAllConfigs(db) {
+  getAllConfigs() {
     return new Promise(resolve => {
-      const adminDB = db.db(MongoShardsInspector.ADMIN_DB);
+      const adminDB = this.driver.db(MongoShardsInspector.ADMIN_DB);
       const configTree = {
         text: 'Config Servers',
         children: []
@@ -373,9 +373,9 @@ class TreeInspector {
     });
   }
 
-  getAllShards(driver) {
+  getAllShards() {
     return new Promise(resolve => {
-      const collection = driver
+      const collection = this.driver
         .db(MongoShardsInspector.CONFIG_DB)
         .collection(MongoShardsInspector.SHARDS_COLLECTION);
       collection
@@ -419,9 +419,9 @@ class TreeInspector {
     });
   }
 
-  getAllMongos(db) {
+  getAllMongos() {
     return new Promise(resolve => {
-      const collection = db
+      const collection = this.driver
         .db(MongoShardsInspector.CONFIG_DB)
         .collection(MongoShardsInspector.MONGOS_COLLECTION);
       collection
@@ -448,8 +448,8 @@ class TreeInspector {
    *
    * @param db
    */
-  inspectReplicaMembers(driver) {
-    const adminDb = driver.db('admin').admin();
+  inspectReplicaMembers() {
+    const adminDb = this.driver.db('admin').admin();
     const replica = {
       text: 'Replica Set',
       children: []

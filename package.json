@@ -6,8 +6,14 @@
   "author": "Joey Yi Zhao (zhaoyi0113@gmail.com)",
   "license": "MIT",
   "dependencies": {
-    "jest": "^22.4.4",
     "lodash": "^4.17.10",
     "mongodb": "^3.1.0-beta4"
+  },
+  "devDependencies": {
+    "jest": "^22.4.4",
+    "mlaunch-node": "^0.0.1"
+  },
+  "scripts": {
+    "test": "jest tests"
   }
 }
