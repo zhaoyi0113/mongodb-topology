@@ -256,11 +256,11 @@ class TreeInspector {
             });
         })
         .catch(err => {
-          log.warn(err.message);
+          console.warn(err.message);
           resolve(allRoles);
         });
     }).catch(err => {
-      log.error('get error ', err);
+      console.error('get error ', err);
       return allRoles;
     });
   }
