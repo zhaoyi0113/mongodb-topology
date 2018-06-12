@@ -17,7 +17,7 @@ describe('test build database tree', () => {
           reject(err);
           return null;
         }
-        const proms = [];
+        let proms = [];
         proms.push(driver.db('testdb1').createCollection('testcol1_1'));
         proms.push(driver.db('testdb1').createCollection('testcol1_2'));
         proms.push(driver.db('testdb2').createCollection('testcol2_1'));
@@ -25,8 +25,13 @@ describe('test build database tree', () => {
         Promise
           .all(proms)
           .then((res) => {
-            done();
-          });
+            proms = [];
+            proms.push(driver.db('testdb1').collection('testcol1_1').createIndex('idx1', {name: 1}));
+            proms.push(driver.db('testdb1').collection('testcol1_2').createIndex('idx1', {name: 1}));
+            proms.push(driver.db('testdb2').collection('testcol2_1').createIndex('idx1', {name: 1}));
+            proms.push(driver.db('testdb2').collection('testcol2_2').createIndex('idx1', {name: 1}));
+            return Promise.all(proms);
+          }).then(() => done());
       });
     }, 3000);
   }, 10000);
@@ -53,6 +58,9 @@ describe('test build database tree', () => {
       assert.equal(myDbs[1].children[0].type, 'collection');
       assert.equal(myDbs[1].children[1].name, 'testcol2_2');
       assert.equal(myDbs[1].children[1].type, 'collection');
+      assert.equal(myDbs[0].children[0].children[0].name, 'idx1_1');
+      assert.equal(myDbs[0].children[0].children[0].type, 'index');
+      console.log(myDbs[0].children[0]);
       done();
     }).catch(err => {
       console.error(err);

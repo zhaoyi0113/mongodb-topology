@@ -142,7 +142,7 @@ class TreeInspector {
           value
             .collections
             .map(col => {
-              promises.push(this.inspectIndex(col, _.find(dbData.children, {text: col.collectionName})));
+              promises.push(this.inspectIndex(col, _.find(dbData.children, {name: col.collectionName})));
             });
           return Promise
             .all(promises)
@@ -170,7 +170,7 @@ class TreeInspector {
           return index.name !== '_id_';
         });
         const result = idx.map(index => {
-          return {text: index.name, type: treeNodeTypes.INDEX};
+          return {name: index.name, type: treeNodeTypes.INDEX};
         });
         if (result.length === 0) {
           resolve(null);
