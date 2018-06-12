@@ -60,9 +60,14 @@ class TreeInspector {
         this.inspectAllRoles(driver),
         this.inspectReplicaMembers(driver)
       ]).then(value => {
-        resolve(value.filter(v => {
+        const results = (value.filter(v => {
           return v !== null && v !== undefined;
         }));
+        resolve({
+          databases: _.find(results, i => i.databases !== undefined) || [],
+          users: _.find(results, i => i.users !== undefined) || [],
+          roles: _.find(results, i => i.roles !== undefined) || [],
+        })
       }).catch(err => {
         reject(err);
       });
