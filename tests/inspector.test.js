@@ -25,9 +25,9 @@ describe('test inspect tree', () => {
       return inspector.inspect();
     }).then((tree) => {
       console.log(tree);
-      assert.equal(tree.databases !== undefined, true);
-      assert.equal(tree.users !== undefined, true);
-      assert.equal(tree.roles !== undefined, true);
+      assert.equal(tree.databases.length >=0, true);
+      assert.equal(tree.users.length >= 0, true);
+      assert.equal(tree.roles.length >= 0, true);
       done();
     }).catch(err => {
       console.error(err);

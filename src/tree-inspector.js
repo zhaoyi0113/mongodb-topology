@@ -63,10 +63,13 @@ class TreeInspector {
         const results = (value.filter(v => {
           return v !== null && v !== undefined;
         }));
+        const dbs = _.find(results, i => i.databases !== undefined) || {databases:[]};
+        const users = _.find(results, i => i.users !== undefined) || {users:[]};
+        const roles = _.find(results, i => i.roles !== undefined) || {roles: []};
         resolve({
-          databases: _.find(results, i => i.databases !== undefined) || [],
-          users: _.find(results, i => i.users !== undefined) || [],
-          roles: _.find(results, i => i.roles !== undefined) || [],
+          databases: dbs.databases,
+          users: users.users,
+          roles: roles.roles,
         })
       }).catch(err => {
         reject(err);
