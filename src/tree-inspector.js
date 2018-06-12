@@ -76,8 +76,7 @@ class TreeInspector {
     const adminDb = this.driver.db('admin').admin();
     return new Promise((resolve, _reject) => {
       const inspectResult = {
-        text: 'Databases',
-        children: []
+        databases: []
       };
       adminDb
         .listDatabases()
@@ -92,7 +91,7 @@ class TreeInspector {
           Promise
             .all(promises)
             .then(values => {
-              inspectResult.children = _.sortBy(values, 'text');
+              inspectResult.databases = _.sortBy(values, 'name');
               resolve(inspectResult);
             })
             .catch(err => {
@@ -128,13 +127,13 @@ class TreeInspector {
         .collections()
         .then(collections => {
           const dbData = {
-            text: name,
+            name,
             type: treeNodeTypes.DATABASE
           };
           dbData.children = _.map(collections, col => {
-            return {text: col.collectionName, type: treeNodeTypes.COLLECTION};
+            return {name: col.collectionName, type: treeNodeTypes.COLLECTION};
           });
-          dbData.children = _.sortBy(dbData.children, 'text');
+          dbData.children = _.sortBy(dbData.children, 'name');
           return {dbData, collections};
         })
         .then(value => {

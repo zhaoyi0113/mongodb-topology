@@ -1,5 +1,5 @@
 const {MongoClient} = require('mongodb');
-const TreeInspector = require('./builder');
+const TreeInspector = require('./tree-inspector');
 
 const connect = (url, options) => {
   return new Promise((resolve, reject) => {
