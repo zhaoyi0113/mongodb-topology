@@ -237,7 +237,7 @@ class TreeInspector {
         .listDatabases()
         .then(dbs => {
           _.map(dbs.databases, currentDb => {
-            promises.push(this.inspectRoles(driver, currentDb));
+            promises.push(this.inspectRoles(this.driver, currentDb));
           });
           Promise
             .all(promises)

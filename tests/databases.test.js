@@ -68,4 +68,13 @@ describe('test build database tree', () => {
       done();
     });
   });
+
+  it('test build roles', (done) => {
+    connect(url).then((inspector) => {
+      return inspector.inspectAllRoles();
+    }).then((roles) => {
+      console.log('roles :', roles);
+      done();
+    });
+  });
 });
