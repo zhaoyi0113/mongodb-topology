@@ -1,9 +1,11 @@
 const {MongoClient} = require('mongodb');
 const TreeInspector = require('./tree-inspector');
 
+const defaultOptions = {useNewUrlParser: true};
+
 const connect = (url, options) => {
   return new Promise((resolve, reject) => {
-    MongoClient.connect(url, options, (err, driver) => {
+    MongoClient.connect(url, Object.assign(defaultOptions, options), (err, driver) => {
       if(err) {
         reject(err);
         return null;
