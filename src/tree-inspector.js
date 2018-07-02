@@ -222,7 +222,7 @@ class TreeInspector {
         const children = items.map(item => {
           return {text: item._id, user: item.user, db: item.db, type: treeNodeTypes.USERS};
         });
-        users.children = _.uniqBy(children, e => {
+        users.users = _.uniqBy(children, e => {
           return e.text;
         });
         resolve(users);
@@ -253,8 +253,7 @@ class TreeInspector {
               values = values.filter(value => {
                 return value;
               });
-              allRoles.children = values;
-              allRoles.children = allRoles
+              allRoles.roles = allRoles
                 .children
                 .filter(roles => {
                   return !roles.children.length <= 0;
