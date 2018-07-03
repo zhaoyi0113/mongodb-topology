@@ -77,7 +77,7 @@ describe('test build database tree', () => {
 
   test('test build roles', (done) => {
     connect(url).then((inspector) => {
-      return inspector.inspectAllRoles();
+      return inspector.inspectRoles();
     }).then((roles) => {
       console.log('roles :', roles);
       done();

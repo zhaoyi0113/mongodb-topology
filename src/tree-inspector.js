@@ -33,7 +33,7 @@ class TreeInspector {
           this.getAllMongos(),
           this.inspectDatabases(),
           this.inspectUsers(),
-          this.inspectAllRoles(),
+          this.inspectRoles(),
           this.inspectReplicaMembers()
         ])
           .then(value => {
@@ -57,7 +57,7 @@ class TreeInspector {
       Promise.all([
         this.inspectDatabases(driver),
         this.inspectUsers(driver),
-        this.inspectAllRoles(driver),
+        this.inspectRoles(driver),
         this.inspectReplicaMembers(driver)
       ]).then(value => {
         const results = (value.filter(v => {
@@ -233,7 +233,7 @@ class TreeInspector {
     });
   }
 
-  inspectAllRoles() {
+  inspectRoles() {
     const adminDb = this.driver.db('admin').admin();
     const allRoles = {
       text: 'Roles',
@@ -245,7 +245,7 @@ class TreeInspector {
         .listDatabases()
         .then(dbs => {
           _.map(dbs.databases, currentDb => {
-            promises.push(this.inspectRoles(this.driver, currentDb));
+            promises.push(this.inspectDBRoles(this.driver, currentDb));
           });
           Promise
             .all(promises)
@@ -271,7 +271,7 @@ class TreeInspector {
     });
   }
 
-  inspectRoles(driver, currentDb) {
+  inspectDBRoles(driver, currentDb) {
     return new Promise(resolve => {
       const dbName = currentDb.name;
       const showBuiltin = dbName === 'admin';
@@ -309,7 +309,7 @@ class TreeInspector {
           resolve(roles);
         })
         .catch(err => {
-          console.error('inspectRoles error ', err);
+          console.error('inspectDBRoles error ', err);
           resolve();
         });
     });
