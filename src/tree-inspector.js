@@ -250,13 +250,9 @@ class TreeInspector {
           Promise
             .all(promises)
             .then(values => {
-              values = values.filter(value => {
-                return value;
-              });
-              allRoles.roles = allRoles
-                .children
+              allRoles.roles = values
                 .filter(roles => {
-                  return !roles.children.length <= 0;
+                  return !roles.roles.length <= 0;
                 });
               resolve(allRoles);
             });
@@ -280,8 +276,8 @@ class TreeInspector {
         .command({rolesInfo: 1, showBuiltinRoles: showBuiltin})
         .then(roleList => {
           const roles = {
-            text: dbName,
-            children: [],
+            db: dbName,
+            roles: [],
             type: treeNodeTypes.ROLES
           };
           if (!roleList || roleList.length <= 0) {
@@ -289,20 +285,20 @@ class TreeInspector {
             return roles;
           }
           if (showBuiltin) {
-            roles.children[0] = {
+            roles.roles[0] = {
               text: 'Built-In',
-              children: []
+              roles: []
             };
           }
           _.each(roleList.roles, role => {
             if (showBuiltin && role.isBuiltin) {
               roles
-                .children[0]
-                .children
+                .roles[0]
+                .roles
                 .push({text: role.role, db: role.db, type: treeNodeTypes.DEFAULT_ROLE});
             } else {
               roles
-                .children
+                .roles
                 .push({text: role.role, db: role.db, type: treeNodeTypes.ROLE});
             }
           });
