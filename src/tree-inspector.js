@@ -1,22 +1,9 @@
 const _ = require('lodash');
 const mongodb = require('mongodb');
 
-const treeNodeTypes = {
-  DATABASE: 'database',
-  COLLECTION: 'collection',
-  INDEX: 'index',
-  SHARD: 'shard',
-  CONFIG: 'config',
-  MONGOS: 'mongos',
-  USERS: 'user',
-  DEFAULT_ROLE: 'default_role',
-  ROLE: 'role',
-  ROLES: 'roles',
-  REPLICA_MEMBER: 'replica_member',
-  PRIMARY: 'primary',
-  SECONDARY: 'secondary',
-  ARBITER: 'arbiter'
-};
+const { inspectUsers } = require('./user-inspector');
+
+const {treeNodeTypes} = require('./tree-types');
 
 class TreeInspector {
   constructor(driver) {
@@ -55,10 +42,10 @@ class TreeInspector {
     }
     return new Promise((resolve, reject) => {
       Promise.all([
-        this.inspectDatabases(driver),
-        this.inspectUsers(driver),
-        this.inspectRoles(driver),
-        this.inspectReplicaMembers(driver)
+        this.inspectDatabases(),
+        this.inspectUsers(),
+        this.inspectRoles(),
+        this.inspectReplicaMembers()
       ]).then(value => {
         const results = (value.filter(v => {
           return v !== null && v !== undefined;
@@ -198,39 +185,7 @@ class TreeInspector {
    * @param db
    */
   inspectUsers() {
-    const users = {
-      text: 'Users',
-      children: []
-    };
-    return new Promise(resolve => {
-      const userCollection = this.driver
-        .db('admin')
-        .collection('system.users');
-      if (!userCollection) {
-        resolve(users);
-        return;
-      }
-      userCollection.find({}, {
-        _id: 1,
-        user: 1,
-        db: 1
-      }).toArray((err, items) => {
-        if (err || !items || items.length <= 0) {
-          resolve(users);
-          return;
-        }
-        const children = items.map(item => {
-          return {name: item._id, user: item.user, db: item.db, type: treeNodeTypes.USERS};
-        });
-        users.users = _.uniqBy(children, e => {
-          return e.name;
-        });
-        resolve(users);
-      });
-    }).catch(err => {
-      console.error('get error ', err);
-      return users;
-    });
+    return inspectUsers(this.driver);
   }
 
   inspectRoles() {
