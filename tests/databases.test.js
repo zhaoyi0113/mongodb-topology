@@ -31,6 +31,12 @@ describe('test build database tree', () => {
             proms.push(driver.db('testdb2').collection('testcol2_1').createIndex('idx1', {name: 1}));
             proms.push(driver.db('testdb2').collection('testcol2_2').createIndex('idx1', {name: 1}));
             return Promise.all(proms);
+          }).then(() => {
+            const adminDb = driver.db('admin');
+            return adminDb.addUser('user1', '123456', {roles:  [{
+              role : "userAdmin",
+              db   : 'test'
+              }]});
           }).then(() => done());
       });
     }, 3000);
@@ -40,7 +46,7 @@ describe('test build database tree', () => {
     killMongoInstance(mongoDbPort);
   });
 
-  it('test build database tree', (done) => {
+  test('test build database tree', (done) => {
     connect(url).then((inspector) => {
       return inspector.inspectDatabases();
     }).then((dbs) => {
@@ -69,11 +75,23 @@ describe('test build database tree', () => {
     });
   });
 
-  it('test build roles', (done) => {
+  test('test build roles', (done) => {
     connect(url).then((inspector) => {
       return inspector.inspectAllRoles();
     }).then((roles) => {
       console.log('roles :', roles);
+      done();
+    });
+  });
+
+  test('test users', (done) => {
+    connect(url).then((inspector) => {
+      return inspector.inspectUsers();
+    }).then((users) => {
+      assert.equal(users.users.length, 1);
+      assert.equal(users.users[0].user, 'user1');
+      assert.equal(users.users[0].db, 'admin');
+      assert.equal(users.users[0].type, 'user');
       done();
     });
   });
