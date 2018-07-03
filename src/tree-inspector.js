@@ -220,10 +220,10 @@ class TreeInspector {
           return;
         }
         const children = items.map(item => {
-          return {text: item._id, user: item.user, db: item.db, type: treeNodeTypes.USERS};
+          return {name: item._id, user: item.user, db: item.db, type: treeNodeTypes.USERS};
         });
         users.users = _.uniqBy(children, e => {
-          return e.text;
+          return e.name;
         });
         resolve(users);
       });
@@ -286,7 +286,7 @@ class TreeInspector {
           }
           if (showBuiltin) {
             roles.roles[0] = {
-              text: 'Built-In',
+              name: 'Built-In',
               roles: []
             };
           }
@@ -295,11 +295,11 @@ class TreeInspector {
               roles
                 .roles[0]
                 .roles
-                .push({text: role.role, db: role.db, type: treeNodeTypes.DEFAULT_ROLE});
+                .push({name: role.role, db: role.db, type: treeNodeTypes.DEFAULT_ROLE});
             } else {
               roles
                 .roles
-                .push({text: role.role, db: role.db, type: treeNodeTypes.ROLE});
+                .push({name: role.role, db: role.db, type: treeNodeTypes.ROLE});
             }
           });
           resolve(roles);
