@@ -37,7 +37,8 @@ describe('test build database tree', () => {
               role : "userAdmin",
               db   : 'test'
               }]});
-          }).then(() => done());
+          })
+          .then(() => done());
       });
     }, 3000);
   }, 10000);

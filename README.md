@@ -2,7 +2,7 @@
 
 This project is used to load tree topology tree from MongoDB server in NodeJS. It works with MongoDB single instance, Replica Set as well as Shard Cluster. The tree includes Database List, Collection List, Index, ReplicaSet Members, Shard Cluster Memebers, Users, Roles.
 
-## Demo
+## Database Inspector
 
 - Connect to a singole MongoDB instance
 
@@ -238,3 +238,25 @@ It will print the topology tree for this instance as below.
 
 It includes basically `databases`, `collections list` under each datbase, `users` under the system and `roles`.
 
+## Database/Collection Inspector
+
+Collection list is defined as an array element under `database`. Each collection has its name and children. Collection children can be `index` as below example.
+
+```json
+{
+      "name": "test",
+      "type": "database",
+      "children": [
+        {
+          "name": "test",
+          "type": "collection",
+          "children": [
+            {
+              "name": "name_1",
+              "type": "index"
+            }
+          ]
+        }
+      ]
+    }
+```
