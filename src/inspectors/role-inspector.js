@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {treeNodeTypes} = require('./tree-types');
+const {treeNodeTypes} = require('../tree-types');
 
 const inspectDBRoles = (driver, currentDb) => {
     return new Promise(resolve => {

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {treeNodeTypes} = require('./tree-types');
+const {treeNodeTypes} = require('../tree-types');
 
 /**
 * inspect the index under a collection

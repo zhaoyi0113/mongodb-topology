@@ -1,10 +1,8 @@
 const _ = require('lodash');
 const mongodb = require('mongodb');
 
-const { inspectUsers } = require('./user-inspector');
 const {treeNodeTypes} = require('./tree-types');
-const {inspectRoles} = require('./role-inspector');
-const {inspectDatabases} = require('./database-inspector');
+const {inspectRoles, inspectUsers, inspectDatabases} = require('./inspectors/');
 
 class TreeInspector {
   constructor(driver) {
