@@ -67,6 +67,12 @@ describe('test build database tree', () => {
       assert.equal(myDbs[1].children[1].type, 'collection');
       assert.equal(myDbs[0].children[0].children[0].name, 'idx1_1');
       assert.equal(myDbs[0].children[0].children[0].type, 'index');
+      assert.equal(myDbs[0].children[1].children[0].name, 'idx1_1');
+      assert.equal(myDbs[0].children[1].children[0].type, 'index');
+      assert.equal(myDbs[1].children[0].children[0].name, 'idx1_1');
+      assert.equal(myDbs[1].children[0].children[0].type, 'index');
+      assert.equal(myDbs[1].children[1].children[0].name, 'idx1_1');
+      assert.equal(myDbs[1].children[1].children[0].type, 'index');
       console.log(myDbs[0].children[0]);
       done();
     }).catch(err => {
