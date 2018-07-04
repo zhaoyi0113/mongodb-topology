@@ -53,12 +53,13 @@ class TreeInspector {
         const users = _.find(results, i => i.type === TreeNodeTypes.USERS) || {users:[]};
         const roles = _.find(results, i => i.type === TreeNodeTypes.ROLES) || {roles: []};
         const replicaset = _.find(results, i => i.type === TreeNodeTypes.REPLICASET) || {roles: []};
-        resolve({
+        const tree = _.pickBy({
           databases: dbs.databases,
           users: users.users,
           roles: roles.roles,
           replicaset: replicaset.replicaset
-        })
+        }, v => v !== undefined && v !== null);
+        resolve(tree);
       }).catch(err => {
         reject(err);
       });

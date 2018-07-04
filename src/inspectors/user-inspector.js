@@ -10,7 +10,8 @@ module.exports = {
     inspectUsers: inspectUsers = (driver) => {
         const users = {
             name: 'Users',
-            type: TreeNodeTypes.USERS
+            type: TreeNodeTypes.USERS,
+            users: []
         };
         return new Promise(resolve => {
             const userCollection = driver
