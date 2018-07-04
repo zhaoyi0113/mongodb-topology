@@ -7,16 +7,17 @@ const _ = require('lodash');
 describe('test build database tree', () => {
 
   const mongoDbPort = getRandomPort();
-  const url = `mongodb://localhost:${mongoDbPort}/test`;
+  const url = `mongodb://localhost:${mongoDbPort}/admin`;
   const user = 'testuser1';
   const password = '123456';
 
   beforeAll((done) => {
-    launchSingleInstance(mongoDbPort, `--auth --username ${user} --password ${password} --auth-db test`);
+    launchSingleInstance(mongoDbPort, `--auth --username ${user} --password ${password}`);
     setTimeout(() => {
       MongoClient.connect(url, {useNewUrlParser: true, auth: {user, password}}, (err, driver) => {
         if (err) {
-          reject(err);
+          console.log(err);
+          assert.fail(err);
           return null;
         }
         let proms = [];
@@ -97,8 +98,11 @@ describe('test build database tree', () => {
     connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectUsers();
     }).then((users) => {
-      assert.equal(users.users.length, 1);
-      assert.equal(users.users[0].user, 'user1');
+      assert.equal(users.users.length > 0, true);
+      assert.equal(users.users[1].user, 'user1');
+      assert.equal(users.users[1].db, 'admin');
+      assert.equal(users.users[1].type, 'user');
+      assert.equal(users.users[0].user, 'testuser1');
       assert.equal(users.users[0].db, 'admin');
       assert.equal(users.users[0].type, 'user');
       done();
