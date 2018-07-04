@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {treeNodeTypes} = require('../tree-types');
+const {TreeNodeTypes} = require('../tree-types');
 
 const inspectDBRoles = (driver, currentDb) => {
     return new Promise(resolve => {
@@ -12,7 +12,7 @@ const inspectDBRoles = (driver, currentDb) => {
                 const roles = {
                     db: dbName,
                     roles: [],
-                    type: treeNodeTypes.ROLES
+                    type: TreeNodeTypes.ROLES
                 };
                 if (!roleList || roleList.length <= 0) {
                     resolve(roles);
@@ -29,11 +29,11 @@ const inspectDBRoles = (driver, currentDb) => {
                         roles
                             .roles[0]
                             .roles
-                            .push({ name: role.role, db: role.db, type: treeNodeTypes.DEFAULT_ROLE });
+                            .push({ name: role.role, db: role.db, type: TreeNodeTypes.DEFAULT_ROLE });
                     } else {
                         roles
                             .roles
-                            .push({ name: role.role, db: role.db, type: treeNodeTypes.ROLE });
+                            .push({ name: role.role, db: role.db, type: TreeNodeTypes.ROLE });
                     }
                 });
                 resolve(roles);
@@ -49,8 +49,8 @@ module.exports = {
     inspectRoles: (driver) => {
         const adminDb = driver.db('admin').admin();
         const allRoles = {
-            text: 'Roles',
-            children: []
+            name: 'Roles',
+            type: TreeNodeTypes.ROLES
         };
         return new Promise(resolve => {
             const promises = [];

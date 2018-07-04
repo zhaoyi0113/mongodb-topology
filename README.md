@@ -260,3 +260,24 @@ Collection list is defined as an array element under `database`. Each collection
       ]
     }
 ```
+
+## ReplicaSet Members
+
+The replica set members json format is defined:
+
+```json
+"replicaset": [
+    {
+      "text": "localhost:1111 (P)",
+      "type": "primary"
+    },
+    {
+      "text": "localhost:1112 (S)",
+      "type": "secondary"
+    },
+    {
+      "text": "localhost:1113 (S)",
+      "type": "secondary"
+    }
+]
+```

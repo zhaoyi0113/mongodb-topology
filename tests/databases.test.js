@@ -8,11 +8,13 @@ describe('test build database tree', () => {
 
   const mongoDbPort = getRandomPort();
   const url = `mongodb://localhost:${mongoDbPort}/test`;
+  const user = 'testuser1';
+  const password = '123456';
 
   beforeAll((done) => {
-    launchSingleInstance(mongoDbPort);
+    launchSingleInstance(mongoDbPort, `--auth --username ${user} --password ${password} --auth-db test`);
     setTimeout(() => {
-      MongoClient.connect(url, (err, driver) => {
+      MongoClient.connect(url, {useNewUrlParser: true, auth: {user, password}}, (err, driver) => {
         if (err) {
           reject(err);
           return null;
@@ -48,7 +50,7 @@ describe('test build database tree', () => {
   });
 
   test('test build database tree', (done) => {
-    connect(url).then((inspector) => {
+    connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectDatabases();
     }).then((dbs) => {
       console.log(dbs);
@@ -83,7 +85,7 @@ describe('test build database tree', () => {
   });
 
   test('test build roles', (done) => {
-    connect(url).then((inspector) => {
+    connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectRoles();
     }).then((roles) => {
       console.log('roles :', roles);
@@ -92,7 +94,7 @@ describe('test build database tree', () => {
   });
 
   test('test users', (done) => {
-    connect(url).then((inspector) => {
+    connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectUsers();
     }).then((users) => {
       assert.equal(users.users.length, 1);

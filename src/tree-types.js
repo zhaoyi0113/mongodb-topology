@@ -1,5 +1,5 @@
 module.exports = {
-    treeNodeTypes: {
+    TreeNodeTypes: {
         DATABASE: 'database',
         COLLECTION: 'collection',
         INDEX: 'index',
@@ -13,6 +13,7 @@ module.exports = {
         REPLICA_MEMBER: 'replica_member',
         PRIMARY: 'primary',
         SECONDARY: 'secondary',
-        ARBITER: 'arbiter'
+        ARBITER: 'arbiter',
+        REPLICASET: 'replicaset'
       }
 };

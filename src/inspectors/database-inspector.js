@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {treeNodeTypes} = require('../tree-types');
+const {TreeNodeTypes} = require('../tree-types');
 
 /**
 * inspect the index under a collection
@@ -18,7 +18,7 @@ const inspectIndex = (col, data) => {
                 return index.name !== '_id_';
             });
             const result = idx.map(index => {
-                return { name: index.name, type: treeNodeTypes.INDEX };
+                return { name: index.name, type: TreeNodeTypes.INDEX };
             });
             if (result.length === 0) {
                 resolve(null);
@@ -47,10 +47,10 @@ const inspectDatabase = (db, name) => {
             .then(collections => {
                 const dbData = {
                     name,
-                    type: treeNodeTypes.DATABASE
+                    type: TreeNodeTypes.DATABASE
                 };
                 dbData.children = _.map(collections, col => {
-                    return { name: col.collectionName, type: treeNodeTypes.COLLECTION };
+                    return { name: col.collectionName, type: TreeNodeTypes.COLLECTION };
                 });
                 dbData.children = _.sortBy(dbData.children, 'name');
                 return { dbData, collections };
@@ -80,7 +80,8 @@ module.exports = {
         const adminDb = driver.db('admin').admin();
         return new Promise((resolve, _reject) => {
             const inspectResult = {
-                databases: []
+                databases: [],
+                type: TreeNodeTypes.DATABASE
             };
             adminDb
                 .listDatabases()

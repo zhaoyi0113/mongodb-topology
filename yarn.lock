@@ -2022,9 +2022,9 @@ mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mlaunch-node@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/mlaunch-node/-/mlaunch-node-0.0.2.tgz#7152126476ff327fc46c6b4b43689897c3899ea8"
+mlaunch-node@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/mlaunch-node/-/mlaunch-node-0.0.3.tgz#05d5497b3972023e8c5c88ed6fbbde6bca8d4a3c"
 
 mongodb-core@3.1.0-beta4:
   version "3.1.0-beta4"

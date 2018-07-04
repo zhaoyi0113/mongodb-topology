@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const mongodb = require('mongodb');
 
-const {treeNodeTypes} = require('./tree-types');
-const {inspectRoles, inspectUsers, inspectDatabases} = require('./inspectors/');
+const {TreeNodeTypes} = require('./tree-types');
+const {inspectRoles, inspectUsers, inspectDatabases, inspectReplicaset} = require('./inspectors/');
 
 class TreeInspector {
   constructor(driver) {
@@ -49,13 +49,15 @@ class TreeInspector {
         const results = (value.filter(v => {
           return v !== null && v !== undefined;
         }));
-        const dbs = _.find(results, i => i.databases !== undefined) || {databases:[]};
-        const users = _.find(results, i => i.users !== undefined) || {users:[]};
-        const roles = _.find(results, i => i.roles !== undefined) || {roles: []};
+        const dbs = _.find(results, i => i.type === TreeNodeTypes.DATABASE) || {databases:[]};
+        const users = _.find(results, i => i.type === TreeNodeTypes.USERS) || {users:[]};
+        const roles = _.find(results, i => i.type === TreeNodeTypes.ROLES) || {roles: []};
+        const replicaset = _.find(results, i => i.type === TreeNodeTypes.REPLICASET) || {roles: []};
         resolve({
           databases: dbs.databases,
           users: users.users,
           roles: roles.roles,
+          replicaset: replicaset.replicaset
         })
       }).catch(err => {
         reject(err);
@@ -83,35 +85,8 @@ class TreeInspector {
     return inspectRoles(this.driver);
   }
 
-  getMemberState(member) {
-    if (member.state == 0) {
-      return '(STARTUP)'; // startup
-    }
-    if (member.state == 1) {
-      return '(P)'; // primary
-    }
-    if (member.state == 2) {
-      return '(S)'; // secondary
-    }
-    if (member.state == 3) {
-      return '(R)'; // recovering
-    }
-    if (member.state == 5) {
-      return '(STARTUP2)';
-    }
-    if (member.state == 7) {
-      return '(A)'; // arbiter
-    }
-    if (member.state == 8) {
-      return '(D)'; // down
-    }
-    if (member.state == 9) {
-      return '(ROLLBACK)';
-    }
-    if (member.state == 10) {
-      return '(REMOVED)';
-    }
-    return '(UNKNOWN)';
+  inspectReplicaMembers() {
+    return inspectReplicaset(this.driver);
   }
 
   getAllConfigs() {
@@ -133,7 +108,7 @@ class TreeInspector {
             confHosts.map(conf => {
               configTree
                 .children
-                .push({text: conf, type: treeNodeTypes.CONFIG});
+                .push({text: conf, type: TreeNodeTypes.CONFIG});
             });
             resolve(configTree);
           }
@@ -174,7 +149,7 @@ class TreeInspector {
                 text: shardRepName
               };
               shardTree.children = _.map(shards, shard => {
-                return {text: shard, type: treeNodeTypes.SHARD};
+                return {text: shard, type: TreeNodeTypes.SHARD};
               });
               shardsTree
                 .children
@@ -208,62 +183,13 @@ class TreeInspector {
           _.map(docs, doc => {
             shardsTree
               .children
-              .push({text: doc._id, type: treeNodeTypes.MONGOS});
+              .push({text: doc._id, type: TreeNodeTypes.MONGOS});
           });
           resolve(shardsTree);
         });
     }).catch(err => {
       console.error('get all mongos error', err);
       throw new errors.BadRequest(err);
-    });
-  }
-  /**
-   * discover members under replica set
-   *
-   * @param db
-   */
-  inspectReplicaMembers() {
-    const adminDb = this.driver.db('admin').admin();
-    const replica = {
-      text: 'Replica Set',
-      children: []
-    };
-    return new Promise(resolve => {
-      adminDb
-        .command({
-          replSetGetStatus: 1
-        }, (err, result) => {
-          if (!result) {
-            resolve(null);
-            return;
-          }
-          if (result && result.members && result.members.length > 0) {
-            replica.children = _.map(result.members, member => {
-              const memberState = this.getMemberState(member);
-              let treeNodeType;
-              switch (memberState) {
-                case '(P)':
-                  treeNodeType = treeNodeTypes.PRIMARY;
-                  break;
-                case '(S)':
-                  treeNodeType = treeNodeTypes.SECONDARY;
-                  break;
-                case '(A)':
-                  treeNodeType = treeNodeTypes.ARBITER;
-                  break;
-                default:
-                  treeNodeType = treeNodeTypes.REPLICA_MEMBER;
-              }
-              return {
-                text: member.name + ' ' + memberState,
-                type: treeNodeType
-              };
-            });
-          }
-          resolve(replica);
-        });
-    }).catch(err => {
-      console.error('failed to get replica set ', err);
     });
   }
 }

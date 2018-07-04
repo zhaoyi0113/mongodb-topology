@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {treeNodeTypes} = require('../tree-types');
+const {TreeNodeTypes} = require('../tree-types');
 
 module.exports = {
     /**
@@ -9,8 +9,8 @@ module.exports = {
    */
     inspectUsers: inspectUsers = (driver) => {
         const users = {
-            text: 'Users',
-            children: []
+            name: 'Users',
+            type: TreeNodeTypes.USERS
         };
         return new Promise(resolve => {
             const userCollection = driver
@@ -30,7 +30,7 @@ module.exports = {
                     return;
                 }
                 const children = items.map(item => {
-                    return { name: item._id, user: item.user, db: item.db, type: treeNodeTypes.USERS };
+                    return { name: item._id, user: item.user, db: item.db, type: TreeNodeTypes.USERS };
                 });
                 users.users = _.uniqBy(children, e => {
                     return e.name;
