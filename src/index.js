@@ -1,5 +1,6 @@
 const {MongoClient} = require('mongodb');
 const TreeInspector = require('./tree-inspector');
+const {TreeNodeTypes} = require('./tree-types');
 
 const defaultOptions = {useNewUrlParser: true};
 
@@ -17,5 +18,5 @@ const connect = (url, options) => {
 };
 
 module.exports = {
-  connect, TreeInspector
+  connect, TreeNodeTypes
 };
