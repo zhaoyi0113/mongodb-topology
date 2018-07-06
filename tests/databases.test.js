@@ -62,8 +62,10 @@ describe('test build database tree', () => {
       assert.equal(myDbs[1].type, 'database');
       assert.equal(myDbs[0].children[0].name, 'testcol1_1');
       assert.equal(myDbs[0].children[0].type, 'collection');
+      assert.equal(myDbs[0].children[0].dbName, 'testdb1');
       assert.equal(myDbs[0].children[1].name, 'testcol1_2');
       assert.equal(myDbs[0].children[1].type, 'collection');
+      assert.equal(myDbs[0].children[1].dbName, 'testdb1');
       assert.equal(myDbs[1].children[0].name, 'testcol2_1');
       assert.equal(myDbs[1].children[0].type, 'collection');
       assert.equal(myDbs[1].children[1].name, 'testcol2_2');

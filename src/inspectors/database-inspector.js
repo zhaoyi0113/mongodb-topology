@@ -54,7 +54,7 @@ const inspectDatabase = (db, name) => {
                     type: TreeNodeTypes.DATABASE
                 };
                 dbData.children = _.map(collections, col => {
-                    return { name: col.collectionName, type: TreeNodeTypes.COLLECTION };
+                    return { name: col.collectionName, type: TreeNodeTypes.COLLECTION, dbName: name };
                 });
                 dbData.children = _.sortBy(dbData.children, 'name');
                 return { dbData, collections };
