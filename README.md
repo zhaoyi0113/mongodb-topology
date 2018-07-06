@@ -242,7 +242,12 @@ It includes basically `databases`, `collections list` under each datbase, `users
 
 Collection list is defined as an array element under `database`. Each collection has its name and children. Collection children can be `index` as below example.
 
-```json
+```javascript
+
+connect(url, {auth: {user, password}}).then((inspector) => {
+      return inspector.inspectDatabases();
+}).then((dbs) => console.log(dbs));
+
 {
       "name": "test",
       "type": "database",
@@ -265,7 +270,13 @@ Collection list is defined as an array element under `database`. Each collection
 
 The replica set members json format is defined:
 
-```json
+```javascript
+
+connect(url, {auth: {user, password}}).then((inspector) => {
+      return inspector.inspectReplicaMembers();
+}).then((replica) => console.log(replica));
+
+
 "replicaset": [
     {
       "text": "localhost:1111 (P)",
@@ -281,3 +292,29 @@ The replica set members json format is defined:
     }
 ]
 ```
+
+## Inspect Users
+
+```javascript
+connect(url, {auth: {user, password}}).then((inspector) => {
+      return inspector.inspectUserss();
+}).then((users) => console.log(users));
+
+{
+   "users": [
+        {
+            "name": "admin.admin",
+            "user": "admin",
+            "db": "admin",
+            "type": "user"
+        },
+        {
+            "name": "admin.test",
+            "user": "test",
+            "db": "admin",
+            "type": "user"
+        }
+    ]
+}
+```
+
