@@ -22,9 +22,9 @@ const getCollectionAttributes = (driver, db, collection) => {
       if (!uniqueKeys) {
         return [];
       }
-      const fields = uniqueKeys.map(field => {
-        name: field;
-      });
+      const fields = uniqueKeys.map(field => ({
+        name: field
+      }));
       return fields;
     });
 };
