@@ -27,7 +27,7 @@ const inspectIndex = (col, data) => {
             if (result.length === 0) {
                 resolve(null);
             } else {
-                data.children = result;
+                data.indexes = result;
             }
             resolve();
         });
@@ -51,21 +51,20 @@ const inspectDatabase = (db, name) => {
             .then(collections => {
                 const dbData = {
                     name,
-                    type: TreeNodeTypes.DATABASE
+                    type: TreeNodeTypes.DATABASE,
                 };
-                dbData.children = _.map(collections, col => {
+                dbData.collections = _.map(collections, col => {
                     return { name: col.collectionName, type: TreeNodeTypes.COLLECTION, dbName: name };
                 });
-                dbData.children = _.sortBy(dbData.children, 'name');
-                return { dbData, collections };
+                dbData.collections = _.sortBy(dbData.collections, 'name');
+                return {dbData, collections};
             })
             .then(value => {
                 const promises = [];
-                const { dbData } = value;
-                value
-                    .collections
+                const {dbData, collections} = value;
+                collections
                     .map(col => {
-                        promises.push(inspectIndex(col, _.find(dbData.children, { name: col.collectionName })));
+                        promises.push(inspectIndex(col, _.find(dbData.collections, { name: col.collectionName })));
                     });
                 return Promise
                     .all(promises)

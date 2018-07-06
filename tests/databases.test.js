@@ -56,29 +56,29 @@ describe('test build database tree', () => {
     }).then((dbs) => {
       console.log(dbs);
       const myDbs = _.filter(dbs.databases, db => db.name.indexOf('testdb') >= 0);
+      console.log('mydbs:', myDbs[0])
       assert.equal(myDbs[0].name, 'testdb1');
       assert.equal(myDbs[0].type, 'database');
       assert.equal(myDbs[1].name, 'testdb2');
       assert.equal(myDbs[1].type, 'database');
-      assert.equal(myDbs[0].children[0].name, 'testcol1_1');
-      assert.equal(myDbs[0].children[0].type, 'collection');
-      assert.equal(myDbs[0].children[0].dbName, 'testdb1');
-      assert.equal(myDbs[0].children[1].name, 'testcol1_2');
-      assert.equal(myDbs[0].children[1].type, 'collection');
-      assert.equal(myDbs[0].children[1].dbName, 'testdb1');
-      assert.equal(myDbs[1].children[0].name, 'testcol2_1');
-      assert.equal(myDbs[1].children[0].type, 'collection');
-      assert.equal(myDbs[1].children[1].name, 'testcol2_2');
-      assert.equal(myDbs[1].children[1].type, 'collection');
-      assert.equal(myDbs[0].children[0].children[0].name, 'idx1_1');
-      assert.equal(myDbs[0].children[0].children[0].type, 'index');
-      assert.equal(myDbs[0].children[1].children[0].name, 'idx1_1');
-      assert.equal(myDbs[0].children[1].children[0].type, 'index');
-      assert.equal(myDbs[1].children[0].children[0].name, 'idx1_1');
-      assert.equal(myDbs[1].children[0].children[0].type, 'index');
-      assert.equal(myDbs[1].children[1].children[0].name, 'idx1_1');
-      assert.equal(myDbs[1].children[1].children[0].type, 'index');
-      console.log(myDbs[0].children[0]);
+      assert.equal(myDbs[0].collections[0].name, 'testcol1_1');
+      assert.equal(myDbs[0].collections[0].type, 'collection');
+      assert.equal(myDbs[0].collections[0].dbName, 'testdb1');
+      assert.equal(myDbs[0].collections[1].name, 'testcol1_2');
+      assert.equal(myDbs[0].collections[1].type, 'collection');
+      assert.equal(myDbs[0].collections[1].dbName, 'testdb1');
+      assert.equal(myDbs[1].collections[0].name, 'testcol2_1');
+      assert.equal(myDbs[1].collections[0].type, 'collection');
+      assert.equal(myDbs[1].collections[1].name, 'testcol2_2');
+      assert.equal(myDbs[1].collections[1].type, 'collection');
+      assert.equal(myDbs[0].collections[0].indexes[0].name, 'idx1_1');
+      assert.equal(myDbs[0].collections[0].indexes[0].type, 'index');
+      assert.equal(myDbs[0].collections[1].indexes[0].name, 'idx1_1');
+      assert.equal(myDbs[0].collections[1].indexes[0].type, 'index');
+      assert.equal(myDbs[1].collections[0].indexes[0].name, 'idx1_1');
+      assert.equal(myDbs[1].collections[0].indexes[0].type, 'index');
+      assert.equal(myDbs[1].collections[1].indexes[0].name, 'idx1_1');
+      assert.equal(myDbs[1].collections[1].indexes[0].type, 'index');
       done();
     }).catch(err => {
       console.error(err);
