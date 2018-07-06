@@ -1,6 +1,10 @@
 const _ = require('lodash');
 const {TreeNodeTypes} = require('../tree-types');
 
+const getCollectionAttributes = (driver, db, collection) => {
+    return driver.db(db).collection(collection).find({}, {limit: 20}).toArray();
+};
+
 /**
 * inspect the index under a collection
 *
@@ -129,5 +133,6 @@ module.exports = {
         });
     },
     buildInfo,
-    serverStats
+    serverStats,
+    getCollectionAttributes
 };

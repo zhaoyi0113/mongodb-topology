@@ -98,6 +98,10 @@ class TreeInspector {
     return inspectReplicaset(this.driver);
   }
 
+  getCollectionAttributes(db, collection) {
+    return databaseInspector.getCollectionAttributes(this.driver, db, collection);
+  }
+
   getAllConfigs() {
     return new Promise(resolve => {
       const adminDB = this.driver.db(MongoShardsInspector.ADMIN_DB);
