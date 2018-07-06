@@ -1,8 +1,10 @@
 module.exports = {
     TreeNodeTypes: {
         DATABASE: 'database',
+        DATABASES: 'databases',
         COLLECTION: 'collection',
         INDEX: 'index',
+        INDEXES: 'indexes',
         SHARD: 'shard',
         CONFIG: 'config',
         MONGOS: 'mongos',
