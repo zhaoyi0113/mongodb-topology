@@ -16,6 +16,7 @@ module.exports = {
         PRIMARY: 'primary',
         SECONDARY: 'secondary',
         ARBITER: 'arbiter',
-        REPLICASET: 'replicaset'
+        REPLICASET: 'replicaset',
+        FIELDS: 'fields'
       }
 };
