@@ -129,4 +129,13 @@ describe('test build database tree', () => {
       done();
     });
   });
+
+  test('test get collection attributes', (done) => {
+    connect(url, {auth: {user, password}}).then((inspector) => {
+      return inspector.getCollectionAttributes('testdb1', 'testcol1_1');
+    }).then((fields) => {
+      assert.equal(Array.isArray(fields), true);
+      done();
+    });
+  });
 });

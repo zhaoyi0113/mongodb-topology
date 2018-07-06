@@ -2,7 +2,18 @@ const _ = require('lodash');
 const {TreeNodeTypes} = require('../tree-types');
 
 const getCollectionAttributes = (driver, db, collection) => {
-    return driver.db(db).collection(collection).find({}, {limit: 20}).toArray();
+    return driver.db(db).collection(collection).find({}, {limit: 20}).toArray()
+    .then((docs) => {
+        const uniqueKeys = docs.reduce((accumulator, field) => {
+            _.keys(field).forEach(f => {
+              if(accumulator.indexOf(f) < 0) {
+                accumulator.push(f);
+              }
+            })          
+          }, []);
+          const fields = uniqueKeys.map(field => {name: field});
+          return fields;
+    });
 };
 
 /**
