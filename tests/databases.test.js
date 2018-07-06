@@ -108,4 +108,23 @@ describe('test build database tree', () => {
       done();
     });
   });
+
+  test('test database build info', (done) => {
+    connect(url, {auth: {user, password}}).then((inspector) => {
+      return inspector.buildInfo();
+    }).then((buildInfo) => {
+      assert.equal(buildInfo.ok, 1);
+      assert.notEqual(buildInfo.version, undefined);
+      done();
+    });
+  });
+
+  test('test database server status', (done) => {
+    connect(url, {auth: {user, password}}).then((inspector) => {
+      return inspector.serverStats();
+    }).then((stats) => {
+      assert.equal(stats.ok, 1);
+      done();
+    });
+  });
 });

@@ -72,6 +72,18 @@ const inspectDatabase = (db, name) => {
     });
 };
 
+const dbCommand = (driver, db, cmd) => {
+    return driver.db(db).command(cmd);
+};
+
+const buildInfo = (driver) => {
+    return dbCommand(driver, 'admin', {buildInfo: 1});
+};
+
+const serverStats = (driver) => {
+    return dbCommand(driver, 'admin', {serverStatus	: 1});
+}
+
 module.exports = {
     /**
    * discover all databases in a mongodb instance
@@ -115,5 +127,7 @@ module.exports = {
             console.error('get error ', err);
             return new Error(err);
         });
-    }
+    },
+    buildInfo,
+    serverStats
 };

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const mongodb = require('mongodb');
 
 const {TreeNodeTypes} = require('./tree-types');
-const {inspectRoles, inspectUsers, inspectDatabases, inspectReplicaset} = require('./inspectors/');
+const {inspectRoles, inspectUsers, databaseInspector, inspectReplicaset} = require('./inspectors/');
 
 class TreeInspector {
   constructor(driver) {
@@ -70,7 +70,15 @@ class TreeInspector {
    * discover all databases in a mongodb instance
    */
   inspectDatabases() {
-    return inspectDatabases(this.driver);
+    return databaseInspector.inspectDatabases(this.driver);
+  }
+
+  buildInfo() {
+    return databaseInspector.buildInfo(this.driver);
+  }
+
+  serverStats() {
+    return databaseInspector.serverStats(this.driver);
   }
 
   /**

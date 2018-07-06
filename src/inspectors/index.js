@@ -1,6 +1,6 @@
 const { inspectUsers } = require('./user-inspector');
 const {inspectRoles} = require('./role-inspector');
-const {inspectDatabases} = require('./database-inspector');
+const databaseInspector = require('./database-inspector');
 const {inspectReplicaset} = require('./replica-inspector');
 
-module.exports = {inspectDatabases, inspectRoles, inspectUsers, inspectReplicaset};
+module.exports = {databaseInspector, inspectRoles, inspectUsers, inspectReplicaset};
