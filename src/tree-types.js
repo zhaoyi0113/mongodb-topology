@@ -18,5 +18,5 @@ module.exports = {
         ARBITER: 'arbiter',
         REPLICASET: 'replicaset',
         FIELDS: 'fields'
-      }
+      },
 };

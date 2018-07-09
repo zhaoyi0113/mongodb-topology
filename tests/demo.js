@@ -2,10 +2,10 @@ const {MongoClient} = require('mongodb');
 
 const mongodbTopology = require('../src');
 
-const options = {};
-mongodbTopology.connect('mongodb://localhost:27017/test', options)
+const options = {auth: {user: 'testuser1', password: '123456'}};
+mongodbTopology.connect('mongodb://localhost:12762/admin', options)
 .then((inspector) => {
-    return inspector.inspect();
+    return inspector.inspectMongos();
 })
 .then((data) => {
     console.log((JSON.stringify(data)));

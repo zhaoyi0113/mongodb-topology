@@ -2,8 +2,7 @@ const _ = require('lodash');
 const mongodb = require('mongodb');
 
 const {TreeNodeTypes} = require('./tree-types');
-const {inspectRoles, inspectUsers, databaseInspector, inspectReplicaset} = require('./inspectors/');
-
+const {inspectRoles, inspectUsers, databaseInspector, inspectReplicaset, shardInspector} = require('./inspectors/');
 class TreeInspector {
   constructor(driver) {
     this.driver = driver;
@@ -14,9 +13,9 @@ class TreeInspector {
       console.log('inspect mongo os');
       return new Promise((resolve, reject) => {
         Promise.all([
-          this.getAllShards(),
-          this.getAllConfigs(),
-          this.getAllMongos(),
+          this.inspectShards(),
+          this.inspectConfigs(),
+          this.inspectMongos(),
           this.inspectDatabases(),
           this.inspectUsers(),
           this.inspectRoles(),
@@ -102,108 +101,16 @@ class TreeInspector {
     return databaseInspector.getCollectionAttributes(this.driver, db, collection);
   }
 
-  getAllConfigs() {
-    return new Promise(resolve => {
-      const adminDB = this.driver.db(MongoShardsInspector.ADMIN_DB);
-      const configTree = {
-        text: 'Config Servers',
-        children: []
-      };
-      adminDB
-        .command({getShardMap: 1})
-        .then(shardMap => {
-          if (shardMap.map && shardMap.map.config) {
-            const confHosts = shardMap
-              .map
-              .config
-              .split('/')[1]
-              .split(',');
-            confHosts.map(conf => {
-              configTree
-                .children
-                .push({text: conf, type: TreeNodeTypes.CONFIG});
-            });
-            resolve(configTree);
-          }
-        })
-        .catch(err => {
-          console.error('failed to get shard map ', err);
-          resolve(configTree);
-        });
-    }).catch(err => {
-      console.log('cant run get shard map command ', err);
-    });
+  inspectConfigs() {
+    return shardInspector.inspectConfigs(this.driver);
   }
 
-  getAllShards() {
-    return new Promise(resolve => {
-      const collection = this.driver
-        .db(MongoShardsInspector.CONFIG_DB)
-        .collection(MongoShardsInspector.SHARDS_COLLECTION);
-      collection
-        .find({})
-        .toArray((err, docs) => {
-          const shardsTree = {
-            text: 'Shards'
-          };
-          shardsTree.children = [];
-          _.map(docs, doc => {
-            const shards = doc
-              .host
-              .split(',');
-            if (shards && shards.length > 1) {
-              let shardRepName = '';
-              const nameSplit = shards[0].split('/');
-              if (nameSplit.length > 1) {
-                shardRepName = nameSplit[0];
-                shards[0] = nameSplit[1];
-              }
-              const shardTree = {
-                text: shardRepName
-              };
-              shardTree.children = _.map(shards, shard => {
-                return {text: shard, type: TreeNodeTypes.SHARD};
-              });
-              shardsTree
-                .children
-                .push(shardTree);
-            } else {
-              shardsTree
-                .children
-                .push({text: shards});
-            }
-          });
-          return resolve(shardsTree);
-        });
-    }).catch(err => {
-      console.error('get all shards error', err);
-      throw new errors.BadRequest(err);
-    });
+  inspectShards() {
+    return shardInspector.inspectShards(this.driver);
   }
 
-  getAllMongos() {
-    return new Promise(resolve => {
-      const collection = this.driver
-        .db(MongoShardsInspector.CONFIG_DB)
-        .collection(MongoShardsInspector.MONGOS_COLLECTION);
-      collection
-        .find({})
-        .toArray((err, docs) => {
-          const shardsTree = {
-            text: 'Routers',
-            children: []
-          };
-          _.map(docs, doc => {
-            shardsTree
-              .children
-              .push({text: doc._id, type: TreeNodeTypes.MONGOS});
-          });
-          resolve(shardsTree);
-        });
-    }).catch(err => {
-      console.error('get all mongos error', err);
-      throw new errors.BadRequest(err);
-    });
+  inspectMongos() {
+    return shardInspector.inspectMongos(this.driver);
   }
 }
 

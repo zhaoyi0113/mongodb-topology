@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "jest": "^22.4.4",
-    "mlaunch-node": "^0.0.3"
+    "mlaunch-node": "^0.0.4"
   },
   "scripts": {
     "test": "yarn run test:dev tests",

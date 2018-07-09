@@ -230,9 +230,10 @@ The replica set members json format is defined:
 
 ```javascript
 
-connect(url, {auth: {user, password}}).then((inspector) => {
+connect(url, {auth: {user, password}})
+  .then((inspector) => {
       return inspector.inspectReplicaMembers();
-}).then((replica) => console.log(replica));
+  }).then((replica) => console.log(replica));
 
 
 "replicaset": [
@@ -254,9 +255,10 @@ connect(url, {auth: {user, password}}).then((inspector) => {
 ## Inspect Users
 
 ```javascript
-connect(url, {auth: {user, password}}).then((inspector) => {
+connect(url, {auth: {user, password}})
+  .then((inspector) => {
       return inspector.inspectUserss();
-}).then((users) => console.log(users));
+  }).then((users) => console.log(users));
 
 {
    "users": [
@@ -276,3 +278,88 @@ connect(url, {auth: {user, password}}).then((inspector) => {
 }
 ```
 
+## Find collection attributes
+
+MongoDB is a NoSQL database which means it doesn't usually have a schema on each collection, although the latest version supports Json Schema. There is a need to find the general attributes in each collection. The method `getCollectionAttributes()` returns the attributes by finding the first 20 document from the given collection. It is not 100% correct but it should be find for most cases.
+
+```javascript
+connect(url)
+    .then((inspector) => {
+      return inspector.getCollectionAttributes(dbName, collectionName);
+    }).then((fields) => {
+      // fields is an array of attribute names
+    });
+```
+
+## Shard Cluster Inspector
+
+There are `mongos`, `config replicaset` and `shard replicaset` inside a shard cluster environment.
+
+Call the general `inspect` method agains the shard cluster URL will give you the cluster topology.
+
+```javascript
+mongodbTopology.connect('mongodb://localhost:27017/test')
+.then((inspector) => {
+    return inspector.inspect();
+})
+.then((data) => {
+    console.log((JSON.stringify(data)));
+});
+```
+
+You can also get separater replicaset from the cluster:
+
+```javascript
+> inspector.inspectConfigs();   // gives your the config replicaset structure
+
+OUTPUT: 
+{ name: 'Config Servers',
+  children:
+  [ { name: 'localhost:12772', type: 'config' },
+     { name: 'localhost:12773', type: 'config' },
+     { name: 'localhost:12774', type: 'config' } 
+  ] 
+}
+
+> inspect.inspectShards(); // get the shard replica set 
+
+OUTPUT:
+
+{
+  "name": "Shards",
+  "children": [
+    {
+      "name": "shard01",
+      "children": [
+        { "name": "localhost:12763", "type": "shard" },
+        { "name": "localhost:12764", "type": "shard" },
+        { "name": "localhost:12765", "type": "shard" }
+      ]
+    },
+    {
+      "name": "shard02",
+      "children": [
+        { "name": "localhost:12766", "type": "shard" },
+        { "name": "localhost:12767", "type": "shard" },
+        { "name": "localhost:12768", "type": "shard" }
+      ]
+    },
+    {
+      "name": "shard03",
+      "children": [
+        { "name": "localhost:12769", "type": "shard" },
+        { "name": "localhost:12770", "type": "shard" },
+        { "name": "localhost:12771", "type": "shard" }
+      ]
+    }
+  ]
+}
+
+> inspect.inspectMongos(); // get the mongos topology
+
+OUTPUT:
+{
+  "text": "Routers",
+  "children": [{ "text": "localhost:12762", "type": "mongos" }]
+}
+```
