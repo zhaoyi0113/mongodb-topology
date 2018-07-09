@@ -26,7 +26,6 @@ describe('insepct shard cluster', () => {
     return connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectConfigs();
     }).then((configs) => {
-      console.log('configs:', configs);
       assert.equal(configs.children.length, 3);
     }).catch((err) => {
       console.error(err);
@@ -38,7 +37,6 @@ describe('insepct shard cluster', () => {
     return connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectShards();
     }).then((shards) => {
-      console.log('get shards', shards);
       assert.equal(shards.children.length, 3);
     }).catch((err) => {
       console.error(err);
