@@ -9,7 +9,7 @@ describe('insepct shard cluster', () => {
   const mongosNum = 1;
   const configNum = 3;
   const shardNum = 3;
-  const url = `mongodb://localhost:${mongoDbPort},localhost:${mongoDbPort+1},localhost:${mongoDbPort+2}/test`;
+  const url = `mongodb://localhost:${mongoDbPort},localhost:${mongoDbPort+1},localhost:${mongoDbPort+2}/admin`;
   const user = 'testuser1';
   const password = '123456';
 
@@ -26,8 +26,20 @@ describe('insepct shard cluster', () => {
     return connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectConfigs();
     }).then((configs) => {
-      console.log('get configs', configs);
-      assert.equal(configs.lenght, 3);
+      console.log('configs:', configs);
+      assert.equal(configs.children.length, 3);
+    }).catch((err) => {
+      console.error(err);
+      assert.fail(err);
+    });
+  });
+
+  test('inspect shards replicaset', () => {
+    return connect(url, {auth: {user, password}}).then((inspector) => {
+      return inspector.inspectShards();
+    }).then((shards) => {
+      console.log('get shards', shards);
+      assert.equal(shards.children.length, 3);
     }).catch((err) => {
       console.error(err);
       assert.fail(err);
