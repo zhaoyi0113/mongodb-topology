@@ -103,7 +103,7 @@ describe('test build database tree', () => {
       assert.equal(users.users.length > 0, true);
       assert.equal(users.users[1].user, 'user1');
       assert.equal(users.users[1].db, 'admin');
-      assert.equal(users.users[1].type, 'user');
+      assert.equal(users.users[1].type, 'users');
       assert.equal(users.users[0].user, 'testuser1');
       assert.equal(users.users[0].db, 'admin');
       assert.equal(users.users[0].type, 'user');
