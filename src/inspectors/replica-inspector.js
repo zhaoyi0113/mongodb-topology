@@ -68,7 +68,7 @@ module.exports = {
                   treeNodeType = TreeNodeTypes.REPLICA_MEMBER;
               }
               return {
-                test: member.name + ' ' + memberState,
+                name: member.name + ' ' + memberState,
                 type: treeNodeType
               };
             });
