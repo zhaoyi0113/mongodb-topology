@@ -8,7 +8,7 @@ module.exports = {
         SHARD: 'shard',
         CONFIG: 'config',
         MONGOS: 'mongos',
-        USERS: 'user',
+        USERS: 'users',
         DEFAULT_ROLE: 'default_role',
         ROLE: 'role',
         ROLES: 'roles',
