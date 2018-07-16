@@ -20,6 +20,7 @@ module.exports = {
         ARBITER: 'arbiter',
         REPLICASET: 'replicaset',
         FIELDS: 'fields',
+        FIELD: 'field',
         ROUTERS: 'routers',
         MONGOS: 'MONGOS',
       },

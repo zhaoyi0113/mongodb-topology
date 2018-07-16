@@ -23,7 +23,8 @@ const getCollectionAttributes = (driver, db, collection) => {
         return [];
       }
       const fields = uniqueKeys.map(field => ({
-        name: field
+        name: field,
+        type: TreeNodeTypes.FIELD
       }));
       return fields;
     });
