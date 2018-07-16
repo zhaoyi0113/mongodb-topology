@@ -26,7 +26,7 @@ describe('insepct shard cluster', () => {
     return connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectConfigs();
     }).then((configs) => {
-      assert.equal(configs.children.length, 3);
+      assert.equal(configs.configs.length, 3);
     }).catch((err) => {
       console.error(err);
       assert.fail(err);
