@@ -7,7 +7,8 @@ const inspectConfigs = (driver) => {
     const adminDB = driver.db('admin');
     const configTree = {
       name: 'Config Servers',
-      children: []
+      type: TreeNodeTypes.CONFIG,
+      configs: []
     };
     adminDB
       .command({getShardMap: 1})
@@ -20,7 +21,7 @@ const inspectConfigs = (driver) => {
             .split(',');
           confHosts.map(conf => {
             configTree
-              .children
+              .configs
               .push({name: conf, type: TreeNodeTypes.CONFIG});
           });
           resolve(configTree);
@@ -44,9 +45,10 @@ const inspectShards = (driver) => {
       .find()
       .toArray((err, docs) => {
         const shardsTree = {
-          name: 'Shards'
+          name: 'Shards',
+          type: TreeNodeTypes.SHARD
         };
-        shardsTree.children = [];
+        shardsTree.shards = [];
         _.map(docs, doc => {
           const shards = doc
             .host
@@ -61,15 +63,15 @@ const inspectShards = (driver) => {
             const shardTree = {
               name: shardRepName
             };
-            shardTree.children = _.map(shards, shard => {
+            shardTree.shards = _.map(shards, shard => {
               return {name: shard, type: TreeNodeTypes.SHARD};
             });
             shardsTree
-              .children
+              .shards
               .push(shardTree);
           } else {
             shardsTree
-              .children
+              .shards
               .push({name: shards});
           }
         });
@@ -90,12 +92,12 @@ const inspectMongos = (driver) => {
       .find({})
       .toArray((err, docs) => {
         const shardsTree = {
-          text: 'Routers',
-          children: []
+          type: TreeNodeTypes.ROUTER,
+          routers: []
         };
         _.map(docs, doc => {
           shardsTree
-            .children
+            .routers
             .push({text: doc._id, type: TreeNodeTypes.MONGOS});
         });
         resolve(shardsTree);

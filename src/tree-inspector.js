@@ -22,14 +22,25 @@ class TreeInspector {
           this.inspectReplicaMembers()
         ])
           .then(value => {
-            resolve(
-              value.filter(v => {
-                return v !== null && v !== undefined;
-              })
-            );
-          })
-          .catch(err => {
-            reject(err);
+            const results = (value.filter(v => {
+              return v !== null && v !== undefined;
+            }));
+            const dbs = _.find(results, i => i.type === TreeNodeTypes.DATABASE) || {databases:[]};
+            const users = _.find(results, i => i.type === TreeNodeTypes.USERS) || {users:[]};
+            const roles = _.find(results, i => i.type === TreeNodeTypes.ROLES) || {roles: []};
+            const shards = _.find(results, i => i.type === TreeNodeTypes.SHARD) || {roles: []};
+            const configs = _.find(results, i => i.type === TreeNodeTypes.CONFIG) || {roles: []};
+            const routers = _.find(results, i => i.type === TreeNodeTypes.ROUTER) || {roles: []};
+            const tree = _.pickBy({
+              databases: dbs.databases,
+              users: users.users,
+              roles: roles.roles,
+              shards: shards.shards,
+              configs: configs.configs,
+              routers: routers.routers
+
+            }, v => v !== undefined && v !== null);
+            resolve(tree);
           })
           .catch(err => {
             reject(err);
