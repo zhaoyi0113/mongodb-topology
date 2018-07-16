@@ -98,7 +98,7 @@ const inspectMongos = (driver) => {
         _.map(docs, doc => {
           shardsTree
             .routers
-            .push({text: doc._id, type: TreeNodeTypes.MONGOS});
+            .push({name: doc._id, type: TreeNodeTypes.MONGOS});
         });
         resolve(shardsTree);
       });
