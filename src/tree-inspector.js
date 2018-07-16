@@ -28,7 +28,7 @@ class TreeInspector {
             const dbs = _.find(results, i => i.type === TreeNodeTypes.DATABASE) || {databases:[]};
             const users = _.find(results, i => i.type === TreeNodeTypes.USERS) || {users:[]};
             const roles = _.find(results, i => i.type === TreeNodeTypes.ROLES) || {roles: []};
-            const shards = _.find(results, i => i.type === TreeNodeTypes.SHARD) || {roles: []};
+            const shards = _.find(results, i => i.type === TreeNodeTypes.SHARDS) || {roles: []};
             const configs = _.find(results, i => i.type === TreeNodeTypes.CONFIG) || {roles: []};
             const routers = _.find(results, i => i.type === TreeNodeTypes.ROUTER) || {roles: []};
             const tree = _.pickBy({

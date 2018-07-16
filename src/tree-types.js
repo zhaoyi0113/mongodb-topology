@@ -6,7 +6,9 @@ module.exports = {
         INDEX: 'index',
         INDEXES: 'indexes',
         SHARD: 'shard',
+        SHARDS: 'shards',
         CONFIG: 'config',
+        CONFIGS: 'configs',
         MONGOS: 'mongos',
         USERS: 'users',
         DEFAULT_ROLE: 'default_role',
@@ -18,6 +20,7 @@ module.exports = {
         ARBITER: 'arbiter',
         REPLICASET: 'replicaset',
         FIELDS: 'fields',
-        ROUTER: 'router'
+        ROUTERS: 'routers',
+        MONGOS: 'MONGOS',
       },
 };

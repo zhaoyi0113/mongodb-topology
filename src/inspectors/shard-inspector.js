@@ -46,7 +46,7 @@ const inspectShards = (driver) => {
       .toArray((err, docs) => {
         const shardsTree = {
           name: 'Shards',
-          type: TreeNodeTypes.SHARD
+          type: TreeNodeTypes.SHARDS
         };
         shardsTree.shards = [];
         _.map(docs, doc => {
@@ -61,7 +61,8 @@ const inspectShards = (driver) => {
               shards[0] = nameSplit[1];
             }
             const shardTree = {
-              name: shardRepName
+              name: shardRepName,
+              type: TreeNodeTypes.SHARDS
             };
             shardTree.shards = _.map(shards, shard => {
               return {name: shard, type: TreeNodeTypes.SHARD};
