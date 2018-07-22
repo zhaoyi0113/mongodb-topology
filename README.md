@@ -149,6 +149,16 @@ It will print the topology tree for this instance as below.
 
 It includes basically `databases`, `collections list` under each datbase, `users` under the system and `roles`.
 
+- If you don't want `MongoDB Topology` manages your connection, you can create a connection driver instance and pass it to Topology class:
+
+```javascript
+const inspector = new TreeInspector(driver);
+inspector.inspect()
+  .then((tree) => {
+    console.log('get mongodb tree');
+  });
+```
+
 ## Database/Collection Inspector
 
 Collection list is defined as an array element under `database`. Each collection has its name and children. Collection children can be `index` as below example.
