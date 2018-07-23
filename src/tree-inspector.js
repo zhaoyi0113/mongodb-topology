@@ -9,53 +9,16 @@ class TreeInspector {
   }
   inspect() {
     const driver = this.driver;
+    const proms = [this.inspectDatabases(),this.inspectUsers(),this.inspectRoles(),this.inspectReplicaMembers()];
+
     if (driver.topology.constructor == mongodb.Mongos) {
       console.log('inspect mongo os');
-      return new Promise((resolve, reject) => {
-        Promise.all([
-          this.inspectShards(),
-          this.inspectConfigs(),
-          this.inspectMongos(),
-          this.inspectDatabases(),
-          this.inspectUsers(),
-          this.inspectRoles(),
-          this.inspectReplicaMembers()
-        ])
-          .then(value => {
-            const results = (value.filter(v => {
-              return v !== null && v !== undefined;
-            }));
-            const dbs = _.find(results, i => i.type === TreeNodeTypes.DATABASE) || {databases:[]};
-            const users = _.find(results, i => i.type === TreeNodeTypes.USERS) || {users:[]};
-            const roles = _.find(results, i => i.type === TreeNodeTypes.ROLES) || {roles: []};
-            const shards = _.find(results, i => i.type === TreeNodeTypes.SHARDS) || {roles: []};
-            const configs = _.find(results, i => i.type === TreeNodeTypes.CONFIG) || {roles: []};
-            const routers = _.find(results, i => i.type === TreeNodeTypes.ROUTER) || {roles: []};
-            const tree = _.pickBy({
-              databases: dbs.databases,
-              users: users.users,
-              roles: roles.roles,
-              shards: shards.shards,
-              configs: configs.configs,
-              routers: routers.routers
-
-            }, v => v !== undefined && v !== null);
-            resolve(tree);
-          })
-          .catch(err => {
-            reject(err);
-          });
-      }).catch(err => {
-        console.error('get error ', err);
-      });
+      proms.push(this.inspectShards());
+      proms.push(this.inspectConfigs());
+      proms.push(this.inspectMongos());
     }
     return new Promise((resolve, reject) => {
-      Promise.all([
-        this.inspectDatabases(),
-        this.inspectUsers(),
-        this.inspectRoles(),
-        this.inspectReplicaMembers()
-      ]).then(value => {
+      Promise.all(proms).then(value => {
         const results = (value.filter(v => {
           return v !== null && v !== undefined;
         }));
@@ -63,11 +26,17 @@ class TreeInspector {
         const users = _.find(results, i => i.type === TreeNodeTypes.USERS) || {users:[]};
         const roles = _.find(results, i => i.type === TreeNodeTypes.ROLES) || {roles: []};
         const replicaset = _.find(results, i => i.type === TreeNodeTypes.REPLICASET) || {roles: []};
+        const shards = _.find(results, i => i.type === TreeNodeTypes.SHARDS) || {roles: []};
+        const configs = _.find(results, i => i.type === TreeNodeTypes.CONFIG) || {roles: []};
+        const routers = _.find(results, i => i.type === TreeNodeTypes.ROUTER) || {roles: []};
         const tree = _.pickBy({
           databases: dbs.databases,
           users: users.users,
           roles: roles.roles,
-          replicaset: replicaset.replicaset
+          replicaset: replicaset.replicaset,
+          shards: shards.shards,
+          configs: configs.configs,
+          routers: routers.routers
         }, v => v !== undefined && v !== null);
         resolve(tree);
       }).catch(err => {
