@@ -7,7 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.10",
-    "mongodb": "^3.1.0-beta4"
+    "mongodb": "^3.1.1"
   },
   "devDependencies": {
     "jest": "^22.4.4",
