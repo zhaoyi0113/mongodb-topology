@@ -1,47 +1,104 @@
-const _ = require('lodash');
-const mongodb = require('mongodb');
+const _ = require("lodash");
+const mongodb = require("mongodb");
+const EventEmitter = require('events');
 
-const {TreeNodeTypes} = require('./tree-types');
-const {inspectRoles, inspectUsers, databaseInspector, inspectReplicaset, shardInspector} = require('./inspectors/');
+const { TreeNodeTypes } = require("./tree-types");
+const {
+  inspectRoles,
+  inspectUsers,
+  databaseInspector,
+  inspectReplicaset,
+  shardInspector
+} = require("./inspectors/");
+const {ServerListener} = require('./listener');
 class TreeInspector {
+
   constructor(driver) {
     this.driver = driver;
+    this.eventEmitter = new EventEmitter();
   }
-  inspect() {
+
+  /**
+   *
+   * @param {*} options {serverStateChange: true}
+   */
+  inspect(options={serverStateChange: true}) {
+    if(options.serverStateChange){
+      const listener = new ServerListener();
+      listener.on('reinspect', () => {
+        this.inspect(options).then(tree => this.eventEmitter.emit('treeChanged', tree));
+      });
+      listener.startListen(this.driver);
+    }
+    return this.inspectMongo(options);
+  }
+
+  inspectMongo() {
     const driver = this.driver;
-    const proms = [this.inspectDatabases(),this.inspectUsers(),this.inspectRoles(),this.inspectReplicaMembers()];
+    const proms = [
+      this.inspectDatabases(),
+      this.inspectUsers(),
+      this.inspectRoles(),
+      this.inspectReplicaMembers()
+    ];
 
     if (driver.topology.constructor == mongodb.Mongos) {
-      console.log('inspect mongo os');
+      console.log("inspect mongo os");
       proms.push(this.inspectShards());
       proms.push(this.inspectConfigs());
       proms.push(this.inspectMongos());
     }
     return new Promise((resolve, reject) => {
-      Promise.all(proms).then(value => {
-        const results = (value.filter(v => {
-          return v !== null && v !== undefined;
-        }));
-        const dbs = _.find(results, i => i.type === TreeNodeTypes.DATABASE) || {databases:[]};
-        const users = _.find(results, i => i.type === TreeNodeTypes.USERS) || {users:[]};
-        const roles = _.find(results, i => i.type === TreeNodeTypes.ROLES) || {roles: []};
-        const replicaset = _.find(results, i => i.type === TreeNodeTypes.REPLICASET) || {roles: []};
-        const shards = _.find(results, i => i.type === TreeNodeTypes.SHARDS) || {roles: []};
-        const configs = _.find(results, i => i.type === TreeNodeTypes.CONFIG) || {roles: []};
-        const routers = _.find(results, i => i.type === TreeNodeTypes.ROUTER) || {roles: []};
-        const tree = _.pickBy({
-          databases: dbs.databases,
-          users: users.users,
-          roles: roles.roles,
-          replicaset: replicaset.replicaset,
-          shards: shards.shards,
-          configs: configs.configs,
-          routers: routers.routers
-        }, v => v !== undefined && v !== null);
-        resolve(tree);
-      }).catch(err => {
-        reject(err);
-      });
+      Promise.all(proms)
+        .then(value => {
+          const results = value.filter(v => {
+            return v !== null && v !== undefined;
+          });
+          const dbs = _.find(
+            results,
+            i => i.type === TreeNodeTypes.DATABASE
+          ) || { databases: [] };
+          const users = _.find(
+            results,
+            i => i.type === TreeNodeTypes.USERS
+          ) || { users: [] };
+          const roles = _.find(
+            results,
+            i => i.type === TreeNodeTypes.ROLES
+          ) || { roles: [] };
+          const replicaset = _.find(
+            results,
+            i => i.type === TreeNodeTypes.REPLICASET
+          ) || { roles: [] };
+          const shards = _.find(
+            results,
+            i => i.type === TreeNodeTypes.SHARDS
+          ) || { roles: [] };
+          const configs = _.find(
+            results,
+            i => i.type === TreeNodeTypes.CONFIG
+          ) || { roles: [] };
+          const routers = _.find(
+            results,
+            i => i.type === TreeNodeTypes.ROUTER
+          ) || { roles: [] };
+          const tree = _.pickBy(
+            {
+              databases: dbs.databases,
+              users: users.users,
+              roles: roles.roles,
+              replicaset: replicaset.replicaset,
+              shards: shards.shards,
+              configs: configs.configs,
+              routers: routers.routers
+            },
+            v => v !== undefined && v !== null
+          );
+          resolve(tree);
+        })
+        .catch(err => {
+          reject(err);
+        });
     });
   }
 
@@ -78,7 +135,11 @@ class TreeInspector {
   }
 
   getCollectionAttributes(db, collection) {
-    return databaseInspector.getCollectionAttributes(this.driver, db, collection);
+    return databaseInspector.getCollectionAttributes(
+      this.driver,
+      db,
+      collection
+    );
   }
 
   inspectConfigs() {
@@ -92,6 +153,22 @@ class TreeInspector {
   inspectMongos() {
     return shardInspector.inspectMongos(this.driver);
   }
+
+  addTreeChangedListener(l) {
+    this.eventEmitter.on('treeChanged', l);
+  }
 }
+
+TreeInspector.ChangeEvents = {
+  serverDescriptionChange: true,
+  serverOpening: true,
+  serverClosed: true,
+  topologyOpening: true,
+  topologyClosed: true,
+  topologyDescriptionChanged: true,
+  serverHeartbeatStarted: true,
+  serverHeartbeatSucceeded: true,
+  serverHeartbeatFailed: true
+};
 
 module.exports = TreeInspector;

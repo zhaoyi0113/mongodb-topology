@@ -3,9 +3,12 @@ const {MongoClient} = require('mongodb');
 const mongodbTopology = require('../src');
 
 const options = {auth: {user: 'testuser1', password: '123456'}};
-mongodbTopology.connect('mongodb://localhost:12762/admin', options)
+mongodbTopology.connect('mongodb://localhost:28018/test')
 .then((inspector) => {
-    return inspector.inspectMongos();
+    inspector.addTreeChangedListener((e) => {
+        console.log('get new data:', e);
+    })
+    return inspector.inspect();
 })
 .then((data) => {
     console.log((JSON.stringify(data)));
