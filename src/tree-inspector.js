@@ -142,6 +142,10 @@ class TreeInspector {
     );
   }
 
+  getCollectionIndexes(dbName, colName) {
+    return this.driver.db(dbName).collection(colName).indexes();
+  }
+
   inspectConfigs() {
     return shardInspector.inspectConfigs(this.driver);
   }
