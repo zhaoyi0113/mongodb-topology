@@ -18,5 +18,5 @@ const connect = (url, options) => {
 };
 
 module.exports = {
-  connect, TreeNodeTypes
+  connect, TreeNodeTypes, TreeInspector
 };
