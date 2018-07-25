@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const mongodb = require("mongodb");
-const EventEmitter = require('events');
+const EventEmitter = require("events");
 
 const { TreeNodeTypes } = require("./tree-types");
 const {
@@ -10,9 +10,8 @@ const {
   inspectReplicaset,
   shardInspector
 } = require("./inspectors/");
-const {ServerListener} = require('./listener');
+const { ServerListener } = require("./listener");
 class TreeInspector {
-
   constructor(driver) {
     this.driver = driver;
     this.eventEmitter = new EventEmitter();
@@ -22,11 +21,13 @@ class TreeInspector {
    *
    * @param {*} options {serverStateChange: true}
    */
-  inspect(options={serverStateChange: true}) {
-    if(options.serverStateChange){
+  inspect(options = { serverStateChange: true }) {
+    if (options.serverStateChange) {
       const listener = new ServerListener();
-      listener.on('reinspect', () => {
-        this.inspect(options).then(tree => this.eventEmitter.emit('treeChanged', tree));
+      listener.on("reinspect", () => {
+        this.inspect(options).then(tree =>
+          this.eventEmitter.emit("treeChanged", tree)
+        );
       });
       listener.startListen(this.driver);
     }
@@ -134,18 +135,6 @@ class TreeInspector {
     return inspectReplicaset(this.driver);
   }
 
-  getCollectionAttributes(db, collection) {
-    return databaseInspector.getCollectionAttributes(
-      this.driver,
-      db,
-      collection
-    );
-  }
-
-  getCollectionIndexes(dbName, colName) {
-    return this.driver.db(dbName).collection(colName).indexes();
-  }
-
   inspectConfigs() {
     return shardInspector.inspectConfigs(this.driver);
   }
@@ -159,7 +148,38 @@ class TreeInspector {
   }
 
   addTreeChangedListener(l) {
-    this.eventEmitter.on('treeChanged', l);
+    this.eventEmitter.on("treeChanged", l);
+  }
+
+  getCollectionAttributes(db, collection) {
+    return databaseInspector.getCollectionAttributes(
+      this.driver,
+      db,
+      collection
+    );
+  }
+
+  getCollectionIndexes(dbName, colName) {
+    return this.driver
+      .db(dbName)
+      .collection(colName)
+      .indexes();
+  }
+
+  createIndex(dbName, colName, idxParam) {
+    return new Promise((resolve, reject) => {
+      this.driver
+        .db(dbName)
+        .collection(colName)
+        .createIndex(idxParam, (error, results) => {
+          console.log('xxx:', error,results);
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results);
+          }
+        });
+    });
   }
 }
 
