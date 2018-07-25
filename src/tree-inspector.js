@@ -181,6 +181,14 @@ class TreeInspector {
         });
     });
   }
+
+  createCollection(dbName, colName, option={}) {
+    return this.driver.db(dbName).collection(colName, option);
+  }
+
+  simpleQuery(dbName, colName, query) {
+    return this.driver.db(dbName).collection(colName).find(query, {limit: 20}).toArray();
+  }
 }
 
 TreeInspector.ChangeEvents = {
