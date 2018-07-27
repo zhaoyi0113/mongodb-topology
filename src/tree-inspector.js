@@ -172,7 +172,21 @@ class TreeInspector {
         .db(dbName)
         .collection(colName)
         .createIndex(idxParam, (error, results) => {
-          console.log('xxx:', error,results);
+          if (error) {
+            reject(error);
+          } else {
+            resolve(results);
+          }
+        });
+    });
+  }
+
+  deleteIndex(dbName, colName, idxName) {
+    return new Promise((resolve, reject) => {
+      this.driver
+        .db(dbName)
+        .collection(colName)
+        .dropIndex(idxName, (error, results) => {
           if (error) {
             reject(error);
           } else {
