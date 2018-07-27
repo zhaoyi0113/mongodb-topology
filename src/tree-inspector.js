@@ -203,6 +203,15 @@ class TreeInspector {
   simpleQuery(dbName, colName, query) {
     return this.driver.db(dbName).collection(colName).find(query, {limit: 20}).toArray();
   }
+
+  deleteCollection(dbName, colName) {
+    return this.driver.db(dbName).dropCollection(colName);
+  }
+
+  deleteDatabase(dbName) {
+    return this.driver.db(dbName).dropDatabase();
+  }
+
 }
 
 TreeInspector.ChangeEvents = {
