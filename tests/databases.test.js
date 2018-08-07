@@ -87,7 +87,7 @@ describe('test build database tree', () => {
     });
   });
 
-  test('test build roles', (done) => {
+  xtest('test build roles', (done) => {
     connect(url, {auth: {user, password}}).then((inspector) => {
       return inspector.inspectRoles();
     }).then((roles) => {
