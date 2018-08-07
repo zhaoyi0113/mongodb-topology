@@ -39,7 +39,7 @@ class TreeInspector {
     const proms = [
       this.inspectDatabases(),
       this.inspectUsers(),
-      this.inspectRoles(),
+      // this.inspectRoles(),
       this.inspectReplicaMembers()
     ];
 
