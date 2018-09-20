@@ -1,8 +1,6 @@
 const {launchSingleInstance, getRandomPort, killMongoInstance} = require('mlaunch-node');
 const assert = require('assert');
 const {connect} = require('../src');
-const {MongoClient} = require('mongodb');
-const _ = require('lodash');
 
 describe('test inspect tree', () => {
 

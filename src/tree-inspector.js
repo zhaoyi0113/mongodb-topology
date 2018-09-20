@@ -1,16 +1,16 @@
-const _ = require("lodash");
-const mongodb = require("mongodb");
-const EventEmitter = require("events");
+const _ = require('lodash');
+const mongodb = require('mongodb');
+const EventEmitter = require('events');
 
-const { TreeNodeTypes } = require("./tree-types");
+const { TreeNodeTypes } = require('./tree-types');
 const {
   inspectRoles,
   inspectUsers,
   databaseInspector,
   inspectReplicaset,
   shardInspector
-} = require("./inspectors/");
-const { ServerListener } = require("./listener");
+} = require('./inspectors/');
+const { ServerListener } = require('./listener');
 class TreeInspector {
   constructor(driver) {
     this.driver = driver;
@@ -24,9 +24,9 @@ class TreeInspector {
   inspect(options = { serverStateChange: true }) {
     if (options.serverStateChange) {
       const listener = new ServerListener();
-      listener.on("reinspect", () => {
+      listener.on('reinspect', () => {
         this.inspect(options).then(tree =>
-          this.eventEmitter.emit("treeChanged", tree)
+          this.eventEmitter.emit('treeChanged', tree)
         );
       });
       listener.startListen(this.driver);
@@ -44,7 +44,7 @@ class TreeInspector {
     ];
 
     if (driver.topology.constructor == mongodb.Mongos) {
-      console.log("inspect mongo os");
+      console.log('inspect mongo os');
       proms.push(this.inspectShards());
       proms.push(this.inspectConfigs());
       proms.push(this.inspectMongos());
@@ -148,7 +148,7 @@ class TreeInspector {
   }
 
   addTreeChangedListener(l) {
-    this.eventEmitter.on("treeChanged", l);
+    this.eventEmitter.on('treeChanged', l);
   }
 
   getCollectionAttributes(db, collection) {
@@ -196,15 +196,32 @@ class TreeInspector {
     });
   }
 
-  createCollection(dbName, colName, option={}) {
+  createCollection(dbName, colName, option = {}) {
     return this.driver.db(dbName).collection(colName, option);
   }
 
-  simpleQuery(dbName, colName, query) {
-    if (query._id) {
-      query._id = new mongodb.ObjectID(query._id);
-    }
-    return this.driver.db(dbName).collection(colName).find(query, {limit: 20}).toArray();
+  getQueryObjectFromJsonExt(jsonExt) {
+    const keys = _.keys(jsonExt);
+    const json = {};
+    keys.forEach(key => {
+      const pattern = /ObjectId\(([0-9a-zA-Z]*)\)/;
+      const match = pattern.exec(jsonExt[key]);
+      if (match && match.length > 0) {
+        json[key] = new mongodb.ObjectId(match[1]);
+      } else {
+        json[key] = jsonExt[key];
+      }
+    });
+    return json;
+  }
+
+  simpleQuery(dbName, colName, query, options) {
+    const jsonQuery = this.getQueryObjectFromJsonExt(query);
+    return this.driver
+      .db(dbName)
+      .collection(colName)
+      .find(jsonQuery, { limit: 20 })
+      .toArray();
   }
 
   deleteCollection(dbName, colName) {
@@ -214,7 +231,6 @@ class TreeInspector {
   deleteDatabase(dbName) {
     return this.driver.db(dbName).dropDatabase();
   }
-
 }
 
 TreeInspector.ChangeEvents = {

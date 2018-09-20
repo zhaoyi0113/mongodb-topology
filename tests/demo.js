@@ -8,7 +8,7 @@ mongodbTopology.connect('mongodb://localhost:27017/test')
     // inspector.addTreeChangedListener((e) => {
     //     console.log('get new data:', e);
     // })
-    return inspector.simpleQuery('test', 'test', {'_id': '5ba2bfcf6d2a0312c7ec12c6'});
+    return inspector.simpleQuery('test', 'test', {'price': 1});
 })
 .then((data) => {
     console.log((JSON.stringify(data)));
