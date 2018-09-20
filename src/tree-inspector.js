@@ -201,6 +201,9 @@ class TreeInspector {
   }
 
   simpleQuery(dbName, colName, query) {
+    if (query._id) {
+      query._id = new mongodb.ObjectID(query._id);
+    }
     return this.driver.db(dbName).collection(colName).find(query, {limit: 20}).toArray();
   }
 

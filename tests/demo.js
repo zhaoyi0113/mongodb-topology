@@ -1,14 +1,14 @@
-const {MongoClient} = require('mongodb');
+const {MongoClient, ObjectID} = require('mongodb');
 
 const mongodbTopology = require('../src');
 
 const options = {auth: {user: 'testuser1', password: '123456'}};
-mongodbTopology.connect('mongodb://localhost:28018/test')
+mongodbTopology.connect('mongodb://localhost:27017/test')
 .then((inspector) => {
-    inspector.addTreeChangedListener((e) => {
-        console.log('get new data:', e);
-    })
-    return inspector.inspect();
+    // inspector.addTreeChangedListener((e) => {
+    //     console.log('get new data:', e);
+    // })
+    return inspector.simpleQuery('test', 'test', {'_id': '5ba2bfcf6d2a0312c7ec12c6'});
 })
 .then((data) => {
     console.log((JSON.stringify(data)));

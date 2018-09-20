@@ -16,6 +16,7 @@ class DBSandBox {
       console: "redirect"
     });
     vm.on("console.log", l);
+    vm.on('exit', (e) => console.log('xxxx'));
     vm.run(code);
     return log;
   }
