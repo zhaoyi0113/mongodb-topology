@@ -101,7 +101,8 @@ const inspectDatabase = (db, name) => {
         return Promise.all(promises).then(() => {
           resolve(dbData);
         });
-      });
+      })
+      .catch(err => console.error(err));
   });
 };
 
@@ -121,7 +122,7 @@ module.exports = {
   /**
    * discover all databases in a mongodb instance
    */
-  inspectDatabases(driver) {
+  inspectDatabases(driver, options) {
     const adminDb = driver.db("admin").admin();
     return new Promise((resolve, _reject) => {
       const inspectResult = {
@@ -146,14 +147,16 @@ module.exports = {
             });
         })
         .catch(err => {
-          console.warn(err.message);
-          inspectDatabase(driver, adminDb.databaseName).then(value => {
-            inspectResult.children = [value];
-            resolve(inspectResult);
-          });
+          console.error('get error:', err);
+          if (options.currentDb) {
+            inspectDatabase(driver, options.currentDb).then(value => {
+              inspectResult.databases = [value];
+              resolve(inspectResult);
+            }).catch(err1 => console.error('failed to query current db ', err1));
+          }
         });
     }).catch(err => {
-      console.error("get error ", err);
+      console.error("get an error ", err);
       return new Error(err);
     });
   },

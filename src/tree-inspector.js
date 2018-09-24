@@ -21,7 +21,7 @@ class TreeInspector {
    *
    * @param {*} options {serverStateChange: true}
    */
-  inspect(options = { serverStateChange: true }) {
+  inspect(options = { serverStateChange: true, currentDb: '' }) {
     if (options.serverStateChange) {
       const listener = new ServerListener();
       listener.on('reinspect', () => {
@@ -34,10 +34,10 @@ class TreeInspector {
     return this.inspectMongo(options);
   }
 
-  inspectMongo() {
+  inspectMongo(options) {
     const driver = this.driver;
     const proms = [
-      this.inspectDatabases(),
+      this.inspectDatabases(options),
       this.inspectUsers(),
       // this.inspectRoles(),
       this.inspectReplicaMembers()
@@ -106,8 +106,8 @@ class TreeInspector {
   /**
    * discover all databases in a mongodb instance
    */
-  inspectDatabases() {
-    return databaseInspector.inspectDatabases(this.driver);
+  inspectDatabases(options) {
+    return databaseInspector.inspectDatabases(this.driver, options);
   }
 
   buildInfo() {
