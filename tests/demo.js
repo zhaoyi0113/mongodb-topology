@@ -2,7 +2,7 @@ const {MongoClient, ObjectID} = require('mongodb');
 
 const mongodbTopology = require('../src');
 
-const options = {auth: {user: 'admin', password: 'tom007tom'}};
+const options = {auth: {user: 'admin', password: ''}};
 mongodbTopology.connect('mongodb://ds225902.mlab.com:25902/homesoft', options)
 .then((inspector) => {
     // inspector.addTreeChangedListener((e) => {
