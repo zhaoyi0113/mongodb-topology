@@ -71,13 +71,15 @@ describe('test build database tree', () => {
       assert.equal(myDbs[1].collections[0].type, 'collection');
       assert.equal(myDbs[1].collections[1].name, 'testcol2_2');
       assert.equal(myDbs[1].collections[1].type, 'collection');
-      assert.equal(myDbs[0].collections[0].indexes[0].name, 'idx1_1');
+      assert.equal(myDbs[0].collections[0].indexes[0].name, '_id_');
+      assert.equal(myDbs[0].collections[0].indexes[1].name, 'idx1_1');
       assert.equal(myDbs[0].collections[0].indexes[0].type, 'index');
-      assert.equal(myDbs[0].collections[1].indexes[0].name, 'idx1_1');
+      assert.equal(myDbs[0].collections[1].indexes[0].name, '_id_');
+      assert.equal(myDbs[0].collections[1].indexes[1].name, 'idx1_1');
       assert.equal(myDbs[0].collections[1].indexes[0].type, 'index');
-      assert.equal(myDbs[1].collections[0].indexes[0].name, 'idx1_1');
+      assert.equal(myDbs[1].collections[0].indexes[1].name, 'idx1_1');
       assert.equal(myDbs[1].collections[0].indexes[0].type, 'index');
-      assert.equal(myDbs[1].collections[1].indexes[0].name, 'idx1_1');
+      assert.equal(myDbs[1].collections[1].indexes[1].name, 'idx1_1');
       assert.equal(myDbs[1].collections[1].indexes[0].type, 'index');
       done();
     }).catch(err => {

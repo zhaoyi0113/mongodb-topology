@@ -44,7 +44,7 @@ const inspectIndex = (col, data) => {
         return;
       }
       const idx = indexes.filter(index => {
-        return index.name !== "_id_";
+        return index.name !== "";
       });
       const result = idx.map(index => {
         return { name: index.name, type: TreeNodeTypes.INDEX };
