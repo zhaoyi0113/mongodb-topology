@@ -1,13 +1,13 @@
 {
   "name": "mongodb-topology",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "Mongo Tree provides a function to query mongodb tree struction for single instance, replica set and shard cluster.",
   "main": "src/index.js",
   "author": "Joey Yi Zhao (zhaoyi0113@gmail.com)",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.10",
-    "mongodb": "^3.1.1",
+    "lodash": "^4.17.21",
+    "mongodb": "^4.4.0",
     "vm2": "^3.6.3"
   },
   "devDependencies": {
